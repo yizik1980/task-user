@@ -1,0 +1,37 @@
+<div
+  class="day-card"
+  [class.today]="day.isToday"
+  [title]="formatDate(day.fullDate)"
+  (click)="onDayAreaClick($event)"
+>
+  <div class="day-header">
+    <span class="day-name">{{ day.dayOfWeek.substring(0, 3) }}</span>
+    <span class="day-date" [class.current-date]="day.isToday">
+      {{ day.date }}
+    </span>
+  </div>
+
+  <div class="day-content">
+    <div class="tasks-list" *ngIf="tasks.length > 0">
+      <div
+        *ngFor="let task of tasks"
+        class="task-item"
+        [class.completed]="task.status === 'completed'"
+        (click)="onTaskClick($event, task)"
+      >
+        <span class="priority-dot" [ngClass]="getPriorityClass(task.priority)"></span>
+        <span class="task-title">{{ task.title }}</span>
+      </div>
+    </div>
+    <div class="empty-state" *ngIf="tasks.length === 0">
+      <p *ngIf="day.isToday" class="today-label">TODAY</p>
+      <p *ngIf="!day.isToday" class="no-tasks">No tasks</p>
+    </div>
+  </div>
+
+  <div class="day-footer">
+    <span class="month-indicator">
+      {{ formatDate(day.fullDate).split(",")[1]?.trim() }}
+    </span>
+  </div>
+</div>
