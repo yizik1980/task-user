@@ -33,60 +33,6 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-// Get pending tasks
-router.get("/status/pending", async (req: Request, res: Response) => {
-  try {
-    const tasks = await TaskRepository.getPendingTasks();
-    res.json({
-      success: true,
-      data: tasks,
-      count: tasks.length,
-    });
-  } catch (error) {
-    console.error("Error fetching pending tasks:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch pending tasks",
-    });
-  }
-});
-
-// Get high priority tasks
-router.get("/priority/high", async (req: Request, res: Response) => {
-  try {
-    const tasks = await TaskRepository.getHighPriorityTasks();
-    res.json({
-      success: true,
-      data: tasks,
-      count: tasks.length,
-    });
-  } catch (error) {
-    console.error("Error fetching high priority tasks:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch high priority tasks",
-    });
-  }
-});
-
-// Get overdue tasks
-router.get("/overdue", async (req: Request, res: Response) => {
-  try {
-    const tasks = await TaskRepository.getOverdueTasks();
-    res.json({
-      success: true,
-      data: tasks,
-      count: tasks.length,
-    });
-  } catch (error) {
-    console.error("Error fetching overdue tasks:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch overdue tasks",
-    });
-  }
-});
-
 // Get task by ID
 router.get("/:id", async (req: Request, res: Response) => {
   try {

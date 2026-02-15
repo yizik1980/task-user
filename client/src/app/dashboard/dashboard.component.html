@@ -1,0 +1,47 @@
+<div class="container">
+  <!-- User Header Info -->
+  <div class="user-header" *ngIf="currentUser">
+    <div class="user-header-content">
+      <div class="user-avatar">
+        <span class="avatar-letter">{{
+          currentUser.email.charAt(0).toUpperCase()
+        }}</span>
+      </div>
+      <div class="user-details">
+        <h2 class="user-name">Welcome, {{ currentUser.email }}</h2>
+        <div class="user-meta">
+          <span class="meta-item">
+            <strong>Email:</strong> {{ currentUser.email }}
+          </span>
+          <span class="meta-item">
+            <strong>Last Updated:</strong>
+            {{ currentUser.updatedAt | date: "short" }}
+          </span>
+        </div>
+      </div>
+      <div class="user-actions">
+        <button class="profile-btn" title="View Profile">
+          <span>&#x1F464;</span> Profile
+        </button>
+        <button class="settings-btn" title="Settings">
+          <span>&#x2699;&#xFE0F;</span> Settings
+        </button>
+      </div>
+    </div>
+    <button class="logout-btn-header" (click)="logout()" title="Logout">
+      <span>&#x2197;&#xFE0F;</span> Logout
+    </button>
+  </div>
+
+  <header>
+    <div class="header-content">
+      <div>
+        <h1>{{ title }}</h1>
+        <p>Manage Users & Tasks</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Weekly Board -->
+  <app-weekly-board></app-weekly-board>
+</div>

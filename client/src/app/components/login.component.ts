@@ -1,4 +1,5 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
@@ -12,8 +13,6 @@ import { LoginRequest } from '@shared/models';
   imports: [CommonModule, FormsModule]
 })
 export class LoginComponent implements OnInit {
-  @Output() switchToSignup = new EventEmitter<void>();
-
   email = '';
   password = '';
   loading = false;
@@ -21,24 +20,20 @@ export class LoginComponent implements OnInit {
   success = false;
   showPassword = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    // Redirect if already logged in
     this.authService.isAuthenticated().subscribe(isAuth => {
       if (isAuth) {
-        // In a real app, use router to navigate to dashboard
-        console.log('Already authenticated');
+        this.router.navigate(['/dashboard']);
       }
     });
   }
 
   onSubmit(): void {
-    // Clear previous messages
     this.error = '';
     this.success = false;
 
-    // Validation
     if (!this.email || !this.password) {
       this.error = 'Email and password are required';
       return;
@@ -63,9 +58,8 @@ export class LoginComponent implements OnInit {
           this.error = '';
           this.email = '';
           this.password = '';
-          // Redirect to dashboard (requires router)
           setTimeout(() => {
-            console.log('Login successful, redirecting...');
+            this.router.navigate(['/dashboard']);
           }, 1500);
         } else {
           this.error = response.error || 'Login failed';
@@ -84,7 +78,7 @@ export class LoginComponent implements OnInit {
   }
 
   navigateToSignup(): void {
-    this.switchToSignup.emit();
+    this.router.navigate(['/signup']);
   }
 
   private isValidEmail(email: string): boolean {

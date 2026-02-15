@@ -38,17 +38,11 @@ export class TaskFormComponent implements OnInit {
     this.formData.dueDate = this.getCurrentDateString();
   }
 
-  /**
-   * Get current date in YYYY-MM-DD format
-   */
   private getCurrentDateString(): string {
     const today = new Date();
     return today.toISOString().split("T")[0];
   }
 
-  /**
-   * Validate form
-   */
   validateForm(): boolean {
     if (!this.formData.title || this.formData.title.trim() === "") {
       return false;
@@ -56,9 +50,6 @@ export class TaskFormComponent implements OnInit {
     return true;
   }
 
-  /**
-   * Get form data
-   */
   getFormData(): TaskFormData {
     return this.formData;
   }

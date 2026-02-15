@@ -1,4 +1,5 @@
-import { Component, Output, EventEmitter } from "@angular/core";
+import { Component } from "@angular/core";
+import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../services/auth.service";
@@ -12,9 +13,6 @@ import { CreateUserRequest } from "@shared/models";
   imports: [CommonModule, FormsModule],
 })
 export class SignupComponent {
-  @Output() switchToLogin = new EventEmitter<void>();
-  @Output() registrationSuccess = new EventEmitter<void>();
-
   firstName = "";
   lastName = "";
   email = "";
@@ -30,7 +28,7 @@ export class SignupComponent {
   showPassword = false;
   showConfirmPassword = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   get passwordsMatch(): boolean {
     return this.password === this.confirmPassword && this.password.length > 0;
@@ -80,22 +78,11 @@ export class SignupComponent {
         console.log("Registration successful:", response);
         this.success = true;
         this.error = "";
-
-        // Reset form
-        this.firstName = "";
-        this.lastName = "";
-        this.email = "";
-        this.username = "";
-        this.password = "";
-        this.confirmPassword = "";
-        this.phone = "";
-        this.city = "";
-        this.country = "";
         this.loading = false;
 
-        // Auto-login on success - emit event to show dashboard
-
-        this.registrationSuccess.emit();
+        setTimeout(() => {
+          this.router.navigate(["/dashboard"]);
+        }, 1500);
       },
       error: (err) => {
         this.loading = false;
@@ -107,6 +94,6 @@ export class SignupComponent {
   }
 
   navigateToLogin(): void {
-    this.switchToLogin.emit();
+    this.router.navigate(["/login"]);
   }
 }
