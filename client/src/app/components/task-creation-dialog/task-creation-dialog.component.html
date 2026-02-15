@@ -1,0 +1,83 @@
+<div class="dialog-overlay" *ngIf="isOpen" (click)="onBackdropClick()">
+  <div class="dialog-container" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2 class="dialog-title">{{ dialogTitle }}</h2>
+      <button class="dialog-close-btn" (click)="onClose()" title="Close">
+        ✕
+      </button>
+    </div>
+
+    <div class="dialog-content">
+      <div class="success-banner" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+      <div class="error-banner" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="task-form">
+        <div class="form-group">
+          <label for="create-title">Task Title *</label>
+          <input
+            id="create-title"
+            type="text"
+            [(ngModel)]="formData.title"
+            placeholder="Enter task title"
+            class="form-input"
+            autofocus
+            (keyup.enter)="onSubmit()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="create-description">Description</label>
+          <textarea
+            id="create-description"
+            [(ngModel)]="formData.description"
+            placeholder="Enter task description"
+            class="form-textarea"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="create-priority">Priority</label>
+            <select
+              id="create-priority"
+              [(ngModel)]="formData.priority"
+              class="form-select"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="create-duedate">Due Date</label>
+            <input
+              id="create-duedate"
+              type="date"
+              [(ngModel)]="formData.dueDate"
+              class="form-input"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button class="dialog-action-btn dialog-action-btn--secondary" (click)="onClose()">
+        Close
+      </button>
+      <button
+        class="dialog-action-btn dialog-action-btn--primary"
+        (click)="onSubmit()"
+        [disabled]="saving"
+      >
+        {{ saving ? "Creating..." : "Create Task" }}
+      </button>
+    </div>
+  </div>
+</div>
