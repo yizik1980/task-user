@@ -1,0 +1,92 @@
+<div class="dialog-overlay" *ngIf="isOpen && task" (click)="onBackdropClick()">
+  <div class="dialog-container" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2 class="dialog-title">Edit Task</h2>
+      <button class="dialog-close-btn" (click)="onClose()" title="Close">
+        ✕
+      </button>
+    </div>
+
+    <div class="dialog-content">
+      <div class="error-banner" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="task-form">
+        <div class="form-group">
+          <label for="edit-title">Task Title *</label>
+          <input
+            id="edit-title"
+            type="text"
+            [(ngModel)]="formData.title"
+            placeholder="Enter task title"
+            class="form-input"
+            (keyup.enter)="onSubmit()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="edit-description">Description</label>
+          <textarea
+            id="edit-description"
+            [(ngModel)]="formData.description"
+            placeholder="Enter task description"
+            class="form-textarea"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-priority">Priority</label>
+            <select
+              id="edit-priority"
+              [(ngModel)]="formData.priority"
+              class="form-select"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-status">Status</label>
+            <select
+              id="edit-status"
+              [(ngModel)]="formData.status"
+              class="form-select"
+            >
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-duedate">Due Date</label>
+          <input
+            id="edit-duedate"
+            type="date"
+            [(ngModel)]="formData.dueDate"
+            class="form-input"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button class="dialog-action-btn dialog-action-btn--secondary" (click)="onClose()">
+        Cancel
+      </button>
+      <button
+        class="dialog-action-btn dialog-action-btn--primary"
+        (click)="onSubmit()"
+        [disabled]="saving"
+      >
+        {{ saving ? "Saving..." : "Save Changes" }}
+      </button>
+    </div>
+  </div>
+</div>
