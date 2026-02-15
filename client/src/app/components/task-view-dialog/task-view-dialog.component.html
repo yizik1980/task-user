@@ -1,0 +1,59 @@
+<div class="dialog-overlay" *ngIf="isOpen && task" (click)="onBackdropClick()">
+  <div class="dialog-container" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2 class="dialog-title">{{ task.title }}</h2>
+      <button class="dialog-close-btn" (click)="onClose()" title="Close">
+        &#10005;
+      </button>
+    </div>
+
+    <div class="dialog-content">
+      <div class="task-detail">
+        <div class="detail-row">
+          <span class="detail-label">Status</span>
+          <span [ngClass]="getStatusClass(task.status)">{{ task.status }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Priority</span>
+          <span [ngClass]="getPriorityClass(task.priority)">{{ task.priority }}</span>
+        </div>
+        <div class="detail-row" *ngIf="task.dueDate">
+          <span class="detail-label">Due Date</span>
+          <span>{{ task.dueDate | date: "mediumDate" }}</span>
+        </div>
+        <div class="detail-row" *ngIf="task.description">
+          <span class="detail-label">Description</span>
+          <p class="task-description">{{ task.description }}</p>
+        </div>
+        <div class="detail-row" *ngIf="task.completedAt">
+          <span class="detail-label">Completed</span>
+          <span>{{ task.completedAt | date: "medium" }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Created</span>
+          <span>{{ task.createdAt | date: "medium" }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button
+        class="dialog-action-btn dialog-action-btn--danger"
+        (click)="onDelete()"
+        [disabled]="deleting"
+      >
+        {{ deleting ? "Deleting..." : "Delete" }}
+      </button>
+      <button
+        class="dialog-action-btn dialog-action-btn--secondary"
+        (click)="onToggleComplete()"
+        [disabled]="toggling"
+      >
+        {{ task.status === "completed" ? "Mark Pending" : "Mark Complete" }}
+      </button>
+      <button class="dialog-action-btn dialog-action-btn--primary" (click)="onEdit()">
+        Edit
+      </button>
+    </div>
+  </div>
+</div>
