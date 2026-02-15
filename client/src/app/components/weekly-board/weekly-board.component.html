@@ -1,0 +1,59 @@
+<div class="weekly-board-container">
+  <div class="weekly-board-header">
+    <div class="header-title">
+      <h2>{{ monthYear }}</h2>
+      <button class="today-btn" (click)="goToToday()" title="Go to current week">
+        Today
+      </button>
+    </div>
+    <div class="header-controls">
+      <button class="nav-btn prev" (click)="previousWeek()" title="Previous week">
+        <span>&larr;</span>
+      </button>
+      <span class="week-range">
+        {{ weekDays[0]?.date }} - {{ weekDays[6]?.date }}
+      </span>
+      <button class="nav-btn next" (click)="nextWeek()" title="Next week">
+        <span>&rarr;</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="error-banner" *ngIf="loadError">
+    Failed to load tasks.
+    <button class="retry-btn" (click)="retryFetch()">Retry</button>
+  </div>
+
+  <div class="weekly-board">
+    <app-day-card
+      *ngFor="let day of weekDays"
+      [day]="day"
+      [tasks]="getTasksForDay(day)"
+      (dayClick)="onDayClick($event)"
+      (taskClick)="onTaskClick($event)"
+    ></app-day-card>
+  </div>
+</div>
+
+<app-task-creation-dialog
+  [isOpen]="showCreateDialog"
+  [selectedDate]="selectedDate"
+  (closed)="onCreateDialogClose()"
+  (taskCreated)="onTaskCreated($event)"
+></app-task-creation-dialog>
+
+<app-task-view-dialog
+  [isOpen]="showViewDialog"
+  [task]="selectedTask"
+  (closed)="onViewDialogClose()"
+  (editRequested)="onEditRequested($event)"
+  (taskDeleted)="onTaskDeleted($event)"
+  (taskUpdated)="onTaskUpdatedFromView($event)"
+></app-task-view-dialog>
+
+<app-task-edit-dialog
+  [isOpen]="showEditDialog"
+  [task]="selectedTask"
+  (closed)="onEditDialogClose()"
+  (taskUpdated)="onTaskUpdated($event)"
+></app-task-edit-dialog>

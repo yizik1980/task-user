@@ -1,0 +1,319 @@
+.weekly-board-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.weekly-board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-title h2 {
+  color: white;
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.today-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.today-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: white;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: white;
+  font-weight: 500;
+}
+
+.nav-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1);
+}
+
+.nav-btn.prev {
+  margin-right: 8px;
+}
+
+.nav-btn.next {
+  margin-left: 8px;
+}
+
+.week-range {
+  min-width: 80px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Weekly Board Grid */
+.weekly-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.day-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+  cursor: pointer;
+}
+
+.day-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
+.day-card.today {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.day-card.today .day-name,
+.day-card.today .day-date,
+.day-card.today .month-indicator {
+  color: white;
+}
+
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.day-card.today .day-header {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.day-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.day-card.today .day-name {
+  color: white;
+}
+
+.day-date {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  min-width: 40px;
+  text-align: right;
+}
+
+.day-date.current-date {
+  background: #667eea;
+  color: white;
+  border-radius: 8px;
+  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.day-card.today .day-date.current-date {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Day Content */
+.day-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+}
+
+.day-indicator {
+  text-align: center;
+}
+
+.today-label {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  display: inline-block;
+}
+
+.day-card.today .today-label {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+.tasks-placeholder {
+  color: #999;
+  font-size: 13px;
+  text-align: center;
+}
+
+.day-card.today .tasks-placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Day Footer */
+.day-footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 2px solid #f0f0f0;
+  text-align: center;
+}
+
+.day-card.today .day-footer {
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.month-indicator {
+  font-size: 11px;
+  color: #999;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.day-card.today .month-indicator {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .weekly-board-container {
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .weekly-board-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-title h2 {
+    font-size: 24px;
+  }
+
+  .header-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .weekly-board {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+  }
+
+  .day-card {
+    min-height: 160px;
+    padding: 12px;
+  }
+
+  .day-date {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .weekly-board {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+
+  .day-card {
+    min-height: 140px;
+    padding: 10px;
+  }
+
+  .day-date {
+    font-size: 18px;
+  }
+
+  .day-name {
+    font-size: 12px;
+  }
+
+  .today-label {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+}
+
+.error-banner {
+  background: rgba(220, 53, 69, 0.2);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.retry-btn {
+  background: white;
+  color: #dc3545;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
