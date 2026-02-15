@@ -1,0 +1,70 @@
+{
+  "hash": "49a4e6fb",
+  "configHash": "8ac4f2ad",
+  "lockfileHash": "a8c72468",
+  "browserHash": "480b9688",
+  "optimized": {
+    "@angular/common": {
+      "src": "../../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
+      "file": "@angular_common.js",
+      "fileHash": "1666c700",
+      "needsInterop": false
+    },
+    "@angular/common/http": {
+      "src": "../../../../../../../node_modules/@angular/common/fesm2022/http.mjs",
+      "file": "@angular_common_http.js",
+      "fileHash": "8f138864",
+      "needsInterop": false
+    },
+    "@angular/core": {
+      "src": "../../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
+      "file": "@angular_core.js",
+      "fileHash": "b93e311d",
+      "needsInterop": false
+    },
+    "@angular/forms": {
+      "src": "../../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
+      "file": "@angular_forms.js",
+      "fileHash": "0638120d",
+      "needsInterop": false
+    },
+    "@angular/platform-browser": {
+      "src": "../../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
+      "file": "@angular_platform-browser.js",
+      "fileHash": "9ec05877",
+      "needsInterop": false
+    },
+    "rxjs": {
+      "src": "../../../../../../../node_modules/rxjs/dist/esm5/index.js",
+      "file": "rxjs.js",
+      "fileHash": "15e8cb51",
+      "needsInterop": false
+    },
+    "rxjs/operators": {
+      "src": "../../../../../../../node_modules/rxjs/dist/esm5/operators/index.js",
+      "file": "rxjs_operators.js",
+      "fileHash": "25bd5fc9",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-PGDMWZN4": {
+      "file": "chunk-PGDMWZN4.js"
+    },
+    "chunk-ZHYY7I2S": {
+      "file": "chunk-ZHYY7I2S.js"
+    },
+    "chunk-BLB7VZ7X": {
+      "file": "chunk-BLB7VZ7X.js"
+    },
+    "chunk-7AADCGDY": {
+      "file": "chunk-7AADCGDY.js"
+    },
+    "chunk-37VSNGIT": {
+      "file": "chunk-37VSNGIT.js"
+    },
+    "chunk-HCRA6G56": {
+      "file": "chunk-HCRA6G56.js"
+    }
+  }
+}

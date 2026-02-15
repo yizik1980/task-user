@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+/dist
+/out-tsc
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Angular
+angular-*.tgz
+npm-debug.log
+yarn-error.log
+
+# Build
+/dist
+/build
+/compile

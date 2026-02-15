@@ -1,0 +1,21 @@
+{
+  "name": "pohlim-monorepo",
+  "version": "1.0.0",
+  "description": "Monorepo with Angular client and Express backend",
+  "private": true,
+  "workspaces": [
+    "client",
+    "backend",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "client:start": "npm start --workspace=client",
+    "client:build": "npm run build --workspace=client",
+    "backend:start": "npm start --workspace=backend",
+    "backend:build": "npm run build --workspace=backend",
+    "backend:dev": "npm run dev --workspace=backend"
+  },
+  "devDependencies": {}
+}
