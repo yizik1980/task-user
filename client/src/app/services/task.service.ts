@@ -39,6 +39,12 @@ export class TaskService {
     return this.apiService.customGet<Task[]>(`${this.endpoint}/overdue`);
   }
 
+  getTasksByDateRange(startDate: string, endDate: string): Observable<ApiResponse<Task[]>> {
+    return this.apiService.customGet<Task[]>(
+      `${this.endpoint}?startDate=${startDate}&endDate=${endDate}`
+    );
+  }
+
   createTask(task: CreateTaskRequest): Observable<ApiResponse<Task>> {
     return this.apiService.create<Task>(this.endpoint, task);
   }
