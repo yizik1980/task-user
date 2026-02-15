@@ -1,0 +1,52 @@
+<div class="task-form">
+  <div class="form-group">
+    <label for="title">Task Title *</label>
+    <input
+      id="title"
+      type="text"
+      [(ngModel)]="formData.title"
+      placeholder="Enter task title"
+      class="form-input"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="description">Description</label>
+    <textarea
+      id="description"
+      [(ngModel)]="formData.description"
+      placeholder="Enter task description"
+      class="form-textarea"
+      rows="4"
+    ></textarea>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="priority">Priority</label>
+      <select id="priority" [(ngModel)]="formData.priority" class="form-select">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="dueDate">Due Date</label>
+      <input
+        id="dueDate"
+        type="date"
+        [(ngModel)]="formData.dueDate"
+        [min]="minDate"
+        class="form-input"
+      />
+    </div>
+  </div>
+
+  <div class="form-info">
+    <p>
+      <strong>Selected Date:</strong>
+      {{ selectedDate | date: "EEEE, MMMM d, y" }}
+    </p>
+  </div>
+</div>

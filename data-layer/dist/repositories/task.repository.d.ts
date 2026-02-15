@@ -25,6 +25,10 @@ export declare class TaskRepository {
      */
     static getAllTasks(): Promise<Task[]>;
     /**
+     * Get tasks within a date range
+     */
+    static getTasksByDateRange(startDate: Date, endDate: Date): Promise<Task[]>;
+    /**
      * Create task
      */
     static createTask(taskData: Omit<Task, "_id">): Promise<Task>;

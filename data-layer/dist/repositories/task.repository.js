@@ -29,6 +29,21 @@ class TaskRepository {
         return await collection.find({}).sort({ createdAt: -1 }).toArray();
     }
     /**
+     * Get tasks within a date range
+     */
+    static async getTasksByDateRange(startDate, endDate) {
+        const collection = (0, mongo_connection_1.getCollection)(this.collectionName);
+        return await collection
+            .find({
+            dueDate: {
+                $gte: startDate,
+                $lte: endDate,
+            },
+        })
+            .sort({ dueDate: 1 })
+            .toArray();
+    }
+    /**
      * Create task
      */
     static async createTask(taskData) {
@@ -89,6 +104,8 @@ class TaskRepository {
         await collection.createIndex({ completed: 1 });
         // Compound index for user + completed
         await collection.createIndex({ userId: 1, completed: 1 });
+        // Index on dueDate for date range queries
+        await collection.createIndex({ dueDate: 1 });
         console.log("✅ Task collection indexes created");
     }
 }

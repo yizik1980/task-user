@@ -1,0 +1,89 @@
+<div class="dialog-overlay" *ngIf="isOpen" (click)="onBackdropClick()">
+  <div class="dialog-container" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="dialog-header">
+      <h2 class="dialog-title">{{ config.title || "Dialog" }}</h2>
+      <button
+        class="dialog-close-btn"
+        (click)="close()"
+        *ngIf="config.canClose !== false"
+        title="Close"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="dialog-content">
+      <p *ngIf="config.message" class="dialog-message">
+        {{ config.message }}
+      </p>
+
+      <!-- Task Form Fields -->
+      <div *ngIf="config.isTaskForm" class="task-form">
+        <div class="form-group">
+          <label for="task-title">Task Title *</label>
+          <input
+            id="task-title"
+            type="text"
+            [(ngModel)]="taskFormData.title"
+            placeholder="Enter task title"
+            class="form-input"
+            autofocus
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="task-description">Description</label>
+          <textarea
+            id="task-description"
+            [(ngModel)]="taskFormData.description"
+            placeholder="Enter task description"
+            class="form-textarea"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-priority">Priority</label>
+            <select
+              id="task-priority"
+              [(ngModel)]="taskFormData.priority"
+              class="form-select"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="task-duedate">Due Date</label>
+            <input
+              id="task-duedate"
+              type="date"
+              [(ngModel)]="taskFormData.dueDate"
+              class="form-input"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Slot for custom content if needed -->
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions" *ngIf="actions.length > 0">
+      <button
+        *ngFor="let action of actions"
+        [ngClass]="getActionButtonClass(action)"
+        (click)="onActionClick(action)"
+        [disabled]="action.disabled || false"
+      >
+        {{ action.label }}
+      </button>
+    </div>
+  </div>
+</div>

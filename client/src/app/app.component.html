@@ -1,42 +1,82 @@
+<!-- Global Dialog Component -->
+<app-dialog></app-dialog>
+
 <!-- Login/Signup Pages -->
-<app-login 
+<app-login
   *ngIf="!isAuthenticated && !showSignup"
-  (switchToSignup)="switchToSignup()">
+  (switchToSignup)="switchToSignup()"
+>
 </app-login>
 
-<app-signup 
+<app-signup
   *ngIf="!isAuthenticated && showSignup"
   (switchToLogin)="switchToLogin()"
-  (registrationSuccess)="onRegistrationSuccess()">
+  (registrationSuccess)="onRegistrationSuccess()"
+>
 </app-signup>
 
 <!-- Dashboard -->
 <div *ngIf="isAuthenticated" class="container">
+  <!-- User Header Info -->
+  <div class="user-header" *ngIf="currentUser">
+    <div class="user-header-content">
+      <div class="user-avatar">
+        <span class="avatar-letter">{{
+          currentUser.email.charAt(0).toUpperCase()
+        }}</span>
+      </div>
+      <div class="user-details">
+        <h2 class="user-name">Welcome, {{ currentUser.email }}</h2>
+        <div class="user-meta">
+          <span class="meta-item">
+            <strong>Email:</strong> {{ currentUser.email }}
+          </span>
+          <span class="meta-item">
+            <strong>Last Updated:</strong>
+            {{ currentUser.updatedAt | date: "short" }}
+          </span>
+        </div>
+      </div>
+      <div class="user-actions">
+        <button class="profile-btn" title="View Profile">
+          <span>👤</span> Profile
+        </button>
+        <button class="settings-btn" title="Settings">
+          <span>⚙️</span> Settings
+        </button>
+      </div>
+    </div>
+    <button class="logout-btn-header" (click)="logout()" title="Logout">
+      <span>↗️</span> Logout
+    </button>
+  </div>
+
   <header>
     <div class="header-content">
       <div>
         <h1>{{ title }}</h1>
         <p>Manage Users & Tasks</p>
       </div>
-      <div class="user-info">
-        <span *ngIf="currentUser" class="user-email">{{ currentUser.email }}</span>
-        <button class="logout-btn" (click)="logout()">Logout</button>
-      </div>
     </div>
   </header>
 
+  <!-- Weekly Board -->
+  <app-weekly-board></app-weekly-board>
+
   <main>
     <div class="tabs">
-      <button 
-        class="tab-button" 
+      <button
+        class="tab-button"
         [class.active]="activeTab === 'users'"
-        (click)="switchTab('users')">
+        (click)="switchTab('users')"
+      >
         Users ({{ users.length }})
       </button>
-      <button 
-        class="tab-button" 
+      <button
+        class="tab-button"
         [class.active]="activeTab === 'tasks'"
-        (click)="switchTab('tasks')">
+        (click)="switchTab('tasks')"
+      >
         Tasks ({{ tasks.length }})
       </button>
     </div>
@@ -45,26 +85,30 @@
     <section class="content-section" *ngIf="activeTab === 'users'">
       <h2>Users</h2>
       <button (click)="fetchUsers()" [disabled]="loading" class="refresh-btn">
-        {{ loading ? 'Loading...' : 'Refresh Users' }}
+        {{ loading ? "Loading..." : "Refresh Users" }}
       </button>
 
       <div class="grid" *ngIf="users.length > 0">
         <div class="card" *ngFor="let user of users">
           <div class="card-header">
             <h3>{{ user.firstName }} {{ user.lastName }}</h3>
-            <span class="badge" [class.active]="user.isActive" [class.inactive]="!user.isActive">
-              {{ user.isActive ? 'Active' : 'Inactive' }}
+            <span
+              class="badge"
+              [class.active]="user.isActive"
+              [class.inactive]="!user.isActive"
+            >
+              {{ user.isActive ? "Active" : "Inactive" }}
             </span>
           </div>
           <div class="card-body">
             <p><strong>Email:</strong> {{ user.email }}</p>
             <p><strong>Username:</strong> {{ user.username }}</p>
             <p><strong>Role:</strong> {{ user.role }}</p>
-            <p><strong>Phone:</strong> {{ user.phone || 'N/A' }}</p>
-            <p><strong>City:</strong> {{ user.city || 'N/A' }}</p>
+            <p><strong>Phone:</strong> {{ user.phone || "N/A" }}</p>
+            <p><strong>City:</strong> {{ user.city || "N/A" }}</p>
           </div>
           <div class="card-footer">
-            <small>Created: {{ user.createdAt | date:'short' }}</small>
+            <small>Created: {{ user.createdAt | date: "short" }}</small>
           </div>
         </div>
       </div>
@@ -78,7 +122,7 @@
     <section class="content-section" *ngIf="activeTab === 'tasks'">
       <h2>Tasks</h2>
       <button (click)="fetchTasks()" [disabled]="loading" class="refresh-btn">
-        {{ loading ? 'Loading...' : 'Refresh Tasks' }}
+        {{ loading ? "Loading..." : "Refresh Tasks" }}
       </button>
 
       <div class="grid" *ngIf="tasks.length > 0">
@@ -92,14 +136,20 @@
           <div class="card-body">
             <p *ngIf="task.description">{{ task.description }}</p>
             <div class="task-meta">
-              <span class="priority" [class]="task.priority">Priority: {{ task.priority }}</span>
+              <span class="priority" [class]="task.priority"
+                >Priority: {{ task.priority }}</span
+              >
               <span class="user-id">User ID: {{ task.userId }}</span>
             </div>
-            <p *ngIf="task.dueDate"><strong>Due:</strong> {{ task.dueDate | date:'short' }}</p>
+            <p *ngIf="task.dueDate">
+              <strong>Due:</strong> {{ task.dueDate | date: "short" }}
+            </p>
           </div>
           <div class="card-footer">
-            <small>Created: {{ task.createdAt | date:'short' }}</small>
-            <small *ngIf="task.completedAt">Completed: {{ task.completedAt | date:'short' }}</small>
+            <small>Created: {{ task.createdAt | date: "short" }}</small>
+            <small *ngIf="task.completedAt"
+              >Completed: {{ task.completedAt | date: "short" }}</small
+            >
           </div>
         </div>
       </div>
