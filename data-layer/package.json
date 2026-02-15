@@ -1,0 +1,26 @@
+{
+  "name": "data-layer",
+  "version": "1.0.0",
+  "description": "Shared data layer with MongoDB connection",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "ts-node src/test-connection.ts",
+    "test-db": "ts-node --require ./register.js src/test-connection.ts",
+    "build": "tsc",
+    "test-mongo": "ts-node --require ./register.js src/test-mongo.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "mongodb": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "tsconfig-paths": "^4.1.0",
+    "typescript": "^5.0.0"
+  }
+}

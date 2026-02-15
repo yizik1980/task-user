@@ -57,7 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (response) => {
-          this.users = response.data;
+          this.users = response.data || [];
           this.loading = false;
         },
         (error) => {
@@ -73,7 +73,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (response) => {
-          this.tasks = response.data;
+          this.tasks = response.data || [];
           this.loading = false;
         },
         (error) => {
@@ -106,6 +106,20 @@ export class AppComponent implements OnInit, OnDestroy {
 
   switchToLogin(): void {
     this.showSignup = false;
+  }
+
+  onRegistrationSuccess(): void {
+    // Check if user is authenticated after registration
+    this.authService.isAuthenticated()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isAuth => {
+        this.isAuthenticated = isAuth;
+        if (isAuth) {
+          this.showSignup = false;
+          this.fetchUsers();
+          this.fetchTasks();
+        }
+      });
   }
 
   ngOnDestroy(): void {

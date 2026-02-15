@@ -6,7 +6,8 @@
 
 <app-signup 
   *ngIf="!isAuthenticated && showSignup"
-  (switchToLogin)="switchToLogin()">
+  (switchToLogin)="switchToLogin()"
+  (registrationSuccess)="onRegistrationSuccess()">
 </app-signup>
 
 <!-- Dashboard -->

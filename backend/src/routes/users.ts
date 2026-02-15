@@ -1,87 +1,100 @@
-import { Router, Request, Response } from 'express';
-import { UserRepository } from '../database/UserRepository';
-import { User } from '@shared/models';
+import { Router, Request, Response } from "express";
+import { UserRepository } from "data-layer";
+import { User } from "@shared/models";
 
 const router = Router();
 
 // Get all users
-router.get('/', async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const users = await UserRepository.getAllUsers();
     res.json({
       success: true,
       data: users,
-      count: users.length
+      count: users.length,
     });
   } catch (error) {
-    console.error('Error fetching users:', error);
+    console.error("Error fetching users:", error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch users'
+      error: "Failed to fetch users",
     });
   }
 });
 
 // Get active users only
-router.get('/active', async (req: Request, res: Response) => {
+router.get("/active", async (req: Request, res: Response) => {
   try {
     const users = await UserRepository.getActiveUsers();
     res.json({
       success: true,
       data: users,
-      count: users.length
+      count: users.length,
     });
   } catch (error) {
-    console.error('Error fetching active users:', error);
+    console.error("Error fetching active users:", error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch active users'
+      error: "Failed to fetch active users",
     });
   }
 });
 
 // Get user by ID
-router.get('/:id', async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid user ID'
+        error: "Invalid user ID",
       });
     }
-    
+
     const user = await UserRepository.getUserById(id);
     if (!user) {
       return res.status(404).json({
         success: false,
-        error: 'User not found'
+        error: "User not found",
       });
     }
-    
+
     res.json({
       success: true,
-      data: user
+      data: user,
     });
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error("Error fetching user:", error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch user'
+      error: "Failed to fetch user",
     });
   }
 });
 
 // Create user
-router.post('/', async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
-    const { email, username, password, firstName, lastName, phone, address, city, country, postalCode, role, isActive } = req.body;
+    const {
+      email,
+      username,
+      password,
+      firstName,
+      lastName,
+      phone,
+      address,
+      city,
+      country,
+      postalCode,
+      role,
+      isActive,
+    } = req.body;
 
     // Validation
     if (!email || !username || !password) {
       return res.status(400).json({
         success: false,
-        error: 'Email, username, and password are required'
+        error: "Email, username, and password are required",
       });
     }
 
@@ -90,7 +103,7 @@ router.post('/', async (req: Request, res: Response) => {
     if (existingUser) {
       return res.status(409).json({
         success: false,
-        error: 'User with this email already exists'
+        error: "User with this email already exists",
       });
     }
 
@@ -105,32 +118,32 @@ router.post('/', async (req: Request, res: Response) => {
       city: city || null,
       country: country || null,
       postalCode: postalCode || null,
-      role: role || 'user',
-      isActive: isActive !== undefined ? isActive : true
+      role: role || "user",
+      isActive: isActive !== undefined ? isActive : true,
     });
 
     res.status(201).json({
       success: true,
       data: newUser,
-      message: 'User created successfully'
+      message: "User created successfully",
     });
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.error("Error creating user:", error);
     res.status(500).json({
       success: false,
-      error: 'Failed to create user'
+      error: "Failed to create user",
     });
   }
 });
 
 // Update user
-router.put('/:id', async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid user ID'
+        error: "Invalid user ID",
       });
     }
 
@@ -138,7 +151,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        error: 'User not found'
+        error: "User not found",
       });
     }
 
@@ -148,25 +161,25 @@ router.put('/:id', async (req: Request, res: Response) => {
     res.json({
       success: true,
       data: updatedUser,
-      message: 'User updated successfully'
+      message: "User updated successfully",
     });
   } catch (error) {
-    console.error('Error updating user:', error);
+    console.error("Error updating user:", error);
     res.status(500).json({
       success: false,
-      error: 'Failed to update user'
+      error: "Failed to update user",
     });
   }
 });
 
 // Delete user
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid user ID'
+        error: "Invalid user ID",
       });
     }
 
@@ -174,7 +187,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        error: 'User not found'
+        error: "User not found",
       });
     }
 
@@ -182,19 +195,19 @@ router.delete('/:id', async (req: Request, res: Response) => {
     if (deleted) {
       res.json({
         success: true,
-        message: 'User deleted successfully'
+        message: "User deleted successfully",
       });
     } else {
       res.status(500).json({
         success: false,
-        error: 'Failed to delete user'
+        error: "Failed to delete user",
       });
     }
   } catch (error) {
-    console.error('Error deleting user:', error);
+    console.error("Error deleting user:", error);
     res.status(500).json({
       success: false,
-      error: 'Failed to delete user'
+      error: "Failed to delete user",
     });
   }
 });

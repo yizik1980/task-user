@@ -1,37 +1,37 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User, CreateUserRequest, UpdateUserRequest, UsersListResponse, UserResponse } from '@shared/models';
+import { ApiService, ApiResponse } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:3000/api/users';
+  private endpoint = '/users';
 
-  constructor(private http: HttpClient) {}
+  constructor(private apiService: ApiService) {}
 
-  getAllUsers(): Observable<UsersListResponse> {
-    return this.http.get<UsersListResponse>(this.apiUrl);
+  getAllUsers(): Observable<ApiResponse<User[]>> {
+    return this.apiService.getAll<User>(this.endpoint);
   }
 
-  getActiveUsers(): Observable<UsersListResponse> {
-    return this.http.get<UsersListResponse>(`${this.apiUrl}/active`);
+  getActiveUsers(): Observable<ApiResponse<User[]>> {
+    return this.apiService.customGet<User[]>(`${this.endpoint}/active`);
   }
 
-  getUserById(id: number): Observable<UserResponse> {
-    return this.http.get<UserResponse>(`${this.apiUrl}/${id}`);
+  getUserById(id: number): Observable<ApiResponse<User>> {
+    return this.apiService.getById<User>(this.endpoint, id);
   }
 
-  createUser(user: CreateUserRequest): Observable<UserResponse> {
-    return this.http.post<UserResponse>(this.apiUrl, user);
+  createUser(user: CreateUserRequest): Observable<ApiResponse<User>> {
+    return this.apiService.create<User>(this.endpoint, user);
   }
 
-  updateUser(id: number, user: UpdateUserRequest): Observable<UserResponse> {
-    return this.http.put<UserResponse>(`${this.apiUrl}/${id}`, user);
+  updateUser(id: number, user: UpdateUserRequest): Observable<ApiResponse<User>> {
+    return this.apiService.update<User>(this.endpoint, id, user);
   }
 
-  deleteUser(id: number): Observable<UserResponse> {
-    return this.http.delete<UserResponse>(`${this.apiUrl}/${id}`);
+  deleteUser(id: number): Observable<ApiResponse<void>> {
+    return this.apiService.delete<void>(this.endpoint, id);
   }
 }

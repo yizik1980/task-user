@@ -1,57 +1,58 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Task, CreateTaskRequest, UpdateTaskRequest, TasksListResponse, TaskResponse } from '@shared/models';
+import { Task, CreateTaskRequest, UpdateTaskRequest } from '@shared/models';
+import { ApiService, ApiResponse } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  private apiUrl = 'http://localhost:3000/api/tasks';
+  private endpoint = '/tasks';
 
-  constructor(private http: HttpClient) {}
+  constructor(private apiService: ApiService) {}
 
-  getAllTasks(): Observable<TasksListResponse> {
-    return this.http.get<TasksListResponse>(this.apiUrl);
+  getAllTasks(): Observable<ApiResponse<Task[]>> {
+    return this.apiService.getAll<Task>(this.endpoint);
   }
 
-  getTaskById(id: number): Observable<TaskResponse> {
-    return this.http.get<TaskResponse>(`${this.apiUrl}/${id}`);
+  getTaskById(id: number): Observable<ApiResponse<Task>> {
+    return this.apiService.getById<Task>(this.endpoint, id);
   }
 
-  getTasksByUserId(userId: number): Observable<TasksListResponse> {
-    return this.http.get<TasksListResponse>(`${this.apiUrl}/user/${userId}`);
+  getTasksByUserId(userId: number): Observable<ApiResponse<Task[]>> {
+    return this.apiService.customGet<Task[]>(`${this.endpoint}/user/${userId}`);
   }
 
-  getTasksByUserIdAndStatus(userId: number, status: string): Observable<TasksListResponse> {
-    return this.http.get<TasksListResponse>(`${this.apiUrl}/user/${userId}/${status}`);
+  getTasksByUserIdAndStatus(userId: number, status: string): Observable<ApiResponse<Task[]>> {
+    return this.apiService.customGet<Task[]>(`${this.endpoint}/user/${userId}/${status}`);
   }
 
-  getPendingTasks(): Observable<TasksListResponse> {
-    return this.http.get<TasksListResponse>(`${this.apiUrl}/status/pending`);
+  getPendingTasks(): Observable<ApiResponse<Task[]>> {
+    return this.apiService.customGet<Task[]>(`${this.endpoint}/status/pending`);
   }
 
-  getHighPriorityTasks(): Observable<TasksListResponse> {
-    return this.http.get<TasksListResponse>(`${this.apiUrl}/priority/high`);
+  getHighPriorityTasks(): Observable<ApiResponse<Task[]>> {
+    return this.apiService.customGet<Task[]>(`${this.endpoint}/priority/high`);
   }
 
-  getOverdueTasks(): Observable<TasksListResponse> {
-    return this.http.get<TasksListResponse>(`${this.apiUrl}/overdue`);
+  getOverdueTasks(): Observable<ApiResponse<Task[]>> {
+    return this.apiService.customGet<Task[]>(`${this.endpoint}/overdue`);
   }
 
-  createTask(task: CreateTaskRequest): Observable<TaskResponse> {
-    return this.http.post<TaskResponse>(this.apiUrl, task);
+  createTask(task: CreateTaskRequest): Observable<ApiResponse<Task>> {
+    return this.apiService.create<Task>(this.endpoint, task);
   }
 
-  updateTask(id: number, task: UpdateTaskRequest): Observable<TaskResponse> {
-    return this.http.put<TaskResponse>(`${this.apiUrl}/${id}`, task);
+  updateTask(id: number, task: UpdateTaskRequest): Observable<ApiResponse<Task>> {
+    return this.apiService.update<Task>(this.endpoint, id, task);
   }
 
-  completeTask(id: number): Observable<TaskResponse> {
-    return this.http.patch<TaskResponse>(`${this.apiUrl}/${id}/complete`, {});
+  completeTask(id: number): Observable<ApiResponse<Task>> {
+    return this.apiService.customPatch<Task>(`${this.endpoint}/${id}/complete`, {});
   }
 
-  deleteTask(id: number): Observable<TaskResponse> {
-    return this.http.delete<TaskResponse>(`${this.apiUrl}/${id}`);
+  deleteTask(id: number): Observable<ApiResponse<void>> {
+    return this.apiService.delete<void>(this.endpoint, id);
   }
 }
+

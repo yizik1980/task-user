@@ -34,8 +34,22 @@ export class AuthService {
     );
   }
 
-  register(userData: CreateUserRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData);
+  register(userData: CreateUserRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, userData).pipe(
+      tap((response) => {
+        if (response.success && response.data) {
+          // Auto-login user after registration
+          this.setToken(response.data.token);
+          const payload: JWTPayload = {
+            id: response.data.user.id,
+            email: response.data.user.email,
+            updatedAt: new Date()
+          };
+          this.setUser(payload);
+          this.isAuthenticated$.next(true);
+        }
+      })
+    );
   }
 
   logout(): void {

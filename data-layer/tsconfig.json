@@ -16,7 +16,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "paths": {
-      "@shared/*": ["./shared/src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "ts-node": {
@@ -25,7 +25,7 @@
       "module": "commonjs",
       "baseUrl": "./",
       "paths": {
-        "@shared/*": ["./shared/src/*"]
+        "@/*": ["./src/*"]
       }
     },
     "transpileOnly": true

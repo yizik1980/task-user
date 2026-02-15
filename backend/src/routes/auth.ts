@@ -1,13 +1,13 @@
-import { Router, Request, Response } from 'express';
-import { UserRepository } from '../database/UserRepository';
-import { JwtService } from '../utils/jwt.service';
-import { PasswordService } from '../utils/password.service';
-import { LoginRequest, LoginResponse, CreateUserRequest } from '@shared/models';
+import { Router, Request, Response } from "express";
+import { UserRepository } from "data-layer";
+import { JwtService } from "../utils/jwt.service";
+import { PasswordService } from "../utils/password.service";
+import { LoginRequest, LoginResponse, CreateUserRequest } from "@shared/models";
 
 const router = Router();
 
 // Login endpoint
-router.post('/login', async (req: Request, res: Response) => {
+router.post("/login", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body as LoginRequest;
 
@@ -15,7 +15,7 @@ router.post('/login', async (req: Request, res: Response) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        error: 'Email and password are required'
+        error: "Email and password are required",
       });
     }
 
@@ -24,7 +24,7 @@ router.post('/login', async (req: Request, res: Response) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid email or password'
+        error: "Invalid email or password",
       });
     }
 
@@ -32,16 +32,19 @@ router.post('/login', async (req: Request, res: Response) => {
     if (!user.isActive) {
       return res.status(403).json({
         success: false,
-        error: 'User account is inactive'
+        error: "User account is inactive",
       });
     }
 
     // Compare password
-    const isPasswordValid = await PasswordService.comparePassword(password, user.password);
+    const isPasswordValid = await PasswordService.comparePassword(
+      password,
+      user.password,
+    );
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid email or password'
+        error: "Invalid email or password",
       });
     }
 
@@ -49,7 +52,7 @@ router.post('/login', async (req: Request, res: Response) => {
     const token = JwtService.generateToken({
       id: user.id,
       email: user.email,
-      updatedAt: user.updatedAt
+      updatedAt: user.updatedAt,
     });
 
     res.json({
@@ -61,32 +64,38 @@ router.post('/login', async (req: Request, res: Response) => {
           username: user.username,
           firstName: user.firstName,
           lastName: user.lastName,
-          role: user.role
+          role: user.role,
         },
         token,
-        expiresIn: '24h'
+        expiresIn: "24h",
       },
-      message: 'Login successful'
+      message: "Login successful",
     } as LoginResponse);
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     res.status(500).json({
       success: false,
-      error: 'Login failed'
+      error: "Login failed",
     });
   }
 });
 
 // Register endpoint
-router.post('/register', async (req: Request, res: Response) => {
+router.post("/register", async (req: Request, res: Response) => {
   try {
     const userData = req.body as CreateUserRequest;
 
     // Validation
-    if (!userData.email || !userData.password || !userData.username || !userData.firstName || !userData.lastName) {
+    if (
+      !userData.email ||
+      !userData.password ||
+      !userData.username ||
+      !userData.firstName ||
+      !userData.lastName
+    ) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields'
+        error: "Missing required fields",
       });
     }
 
@@ -95,12 +104,14 @@ router.post('/register', async (req: Request, res: Response) => {
     if (existingUser) {
       return res.status(409).json({
         success: false,
-        error: 'Email already registered'
+        error: "Email already registered",
       });
     }
 
     // Hash password
-    const hashedPassword = await PasswordService.hashPassword(userData.password);
+    const hashedPassword = await PasswordService.hashPassword(
+      userData.password,
+    );
 
     // Create user
     const newUser = await UserRepository.createUser({
@@ -114,8 +125,8 @@ router.post('/register', async (req: Request, res: Response) => {
       country: userData.country || null,
       address: null,
       postalCode: null,
-      role: 'user',
-      isActive: true
+      role: "user",
+      isActive: true,
     });
 
     res.status(201).json({
@@ -126,29 +137,35 @@ router.post('/register', async (req: Request, res: Response) => {
           email: newUser.email,
           username: newUser.username,
           firstName: newUser.firstName,
-          lastName: newUser.lastName
-        }
+          lastName: newUser.lastName,
+        },
+        token: JwtService.generateToken({
+          id: newUser.id,
+          email: newUser.email,
+          updatedAt: newUser.updatedAt,
+        }),
+        expiresIn: "24h",
       },
-      message: 'User registered successfully. Please log in.'
+      message: "User registered successfully. Welcome!",
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error("Registration error:", error);
     res.status(500).json({
       success: false,
-      error: 'Registration failed'
+      error: "Registration failed",
     });
   }
 });
 
 // Verify token endpoint
-router.post('/verify', (req: Request, res: Response) => {
+router.post("/verify", (req: Request, res: Response) => {
   try {
     const { token } = req.body;
 
     if (!token) {
       return res.status(400).json({
         success: false,
-        error: 'Token is required'
+        error: "Token is required",
       });
     }
 
@@ -156,33 +173,33 @@ router.post('/verify', (req: Request, res: Response) => {
     if (!decoded) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid or expired token'
+        error: "Invalid or expired token",
       });
     }
 
     res.json({
       success: true,
       data: decoded,
-      message: 'Token is valid'
+      message: "Token is valid",
     });
   } catch (error) {
-    console.error('Token verification error:', error);
+    console.error("Token verification error:", error);
     res.status(500).json({
       success: false,
-      error: 'Token verification failed'
+      error: "Token verification failed",
     });
   }
 });
 
 // Refresh token endpoint
-router.post('/refresh', (req: Request, res: Response) => {
+router.post("/refresh", (req: Request, res: Response) => {
   try {
     const { token } = req.body;
 
     if (!token) {
       return res.status(400).json({
         success: false,
-        error: 'Token is required'
+        error: "Token is required",
       });
     }
 
@@ -190,7 +207,7 @@ router.post('/refresh', (req: Request, res: Response) => {
     if (!decoded) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid token'
+        error: "Invalid token",
       });
     }
 
@@ -198,22 +215,22 @@ router.post('/refresh', (req: Request, res: Response) => {
     const newToken = JwtService.generateToken({
       id: decoded.id,
       email: decoded.email,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
 
     res.json({
       success: true,
       data: {
         token: newToken,
-        expiresIn: '24h'
+        expiresIn: "24h",
       },
-      message: 'Token refreshed'
+      message: "Token refreshed",
     });
   } catch (error) {
-    console.error('Token refresh error:', error);
+    console.error("Token refresh error:", error);
     res.status(500).json({
       success: false,
-      error: 'Token refresh failed'
+      error: "Token refresh failed",
     });
   }
 });

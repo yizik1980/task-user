@@ -6,7 +6,8 @@
   "workspaces": [
     "client",
     "backend",
-    "shared"
+    "shared",
+    "data-layer"
   ],
   "scripts": {
     "dev": "npm run dev --workspaces",
