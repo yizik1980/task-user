@@ -3,10 +3,22 @@ import { TaskRepository } from "data-layer";
 
 const router = Router();
 
-// Get all tasks
+// Get all tasks (with optional date range filter)
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const tasks = await TaskRepository.getAllTasks();
+    const { startDate, endDate } = req.query;
+
+    let tasks;
+    if (startDate && endDate) {
+      const start = new Date(startDate as string);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(endDate as string);
+      end.setHours(23, 59, 59, 999);
+      tasks = await TaskRepository.getTasksByDateRange(start, end);
+    } else {
+      tasks = await TaskRepository.getAllTasks();
+    }
+
     res.json({
       success: true,
       data: tasks,
