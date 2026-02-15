@@ -44,6 +44,22 @@ export class TaskRepository {
   }
 
   /**
+   * Get tasks within a date range
+   */
+  static async getTasksByDateRange(startDate: Date, endDate: Date): Promise<Task[]> {
+    const collection = getCollection<Task>(this.collectionName);
+    return await collection
+      .find({
+        dueDate: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      })
+      .sort({ dueDate: 1 })
+      .toArray();
+  }
+
+  /**
    * Create task
    */
   static async createTask(taskData: Omit<Task, "_id">): Promise<Task> {
@@ -121,6 +137,9 @@ export class TaskRepository {
 
     // Compound index for user + completed
     await collection.createIndex({ userId: 1, completed: 1 });
+
+    // Index on dueDate for date range queries
+    await collection.createIndex({ dueDate: 1 });
 
     console.log("✅ Task collection indexes created");
   }
