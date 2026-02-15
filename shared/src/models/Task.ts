@@ -1,6 +1,6 @@
 export interface Task {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
   title: string;
   description: string | null;
   status: TaskStatus;
@@ -15,7 +15,7 @@ export type TaskStatus = 'pending' | 'in-progress' | 'completed';
 export type TaskPriority = 'low' | 'medium' | 'high';
 
 export interface CreateTaskRequest {
-  userId: number;
+  userId: string;
   title: string;
   description?: string;
   status?: TaskStatus;

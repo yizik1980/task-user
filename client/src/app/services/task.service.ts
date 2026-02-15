@@ -15,15 +15,15 @@ export class TaskService {
     return this.apiService.getAll<Task>(this.endpoint);
   }
 
-  getTaskById(id: number): Observable<ApiResponse<Task>> {
+  getTaskById(id: string): Observable<ApiResponse<Task>> {
     return this.apiService.getById<Task>(this.endpoint, id);
   }
 
-  getTasksByUserId(userId: number): Observable<ApiResponse<Task[]>> {
+  getTasksByUserId(userId: string): Observable<ApiResponse<Task[]>> {
     return this.apiService.customGet<Task[]>(`${this.endpoint}/user/${userId}`);
   }
 
-  getTasksByUserIdAndStatus(userId: number, status: string): Observable<ApiResponse<Task[]>> {
+  getTasksByUserIdAndStatus(userId: string, status: string): Observable<ApiResponse<Task[]>> {
     return this.apiService.customGet<Task[]>(`${this.endpoint}/user/${userId}/${status}`);
   }
 
@@ -49,15 +49,15 @@ export class TaskService {
     return this.apiService.create<Task>(this.endpoint, task);
   }
 
-  updateTask(id: number, task: UpdateTaskRequest): Observable<ApiResponse<Task>> {
+  updateTask(id: string, task: UpdateTaskRequest): Observable<ApiResponse<Task>> {
     return this.apiService.update<Task>(this.endpoint, id, task);
   }
 
-  completeTask(id: number): Observable<ApiResponse<Task>> {
+  completeTask(id: string): Observable<ApiResponse<Task>> {
     return this.apiService.customPatch<Task>(`${this.endpoint}/${id}/complete`, {});
   }
 
-  deleteTask(id: number): Observable<ApiResponse<void>> {
+  deleteTask(id: string): Observable<ApiResponse<void>> {
     return this.apiService.delete<void>(this.endpoint, id);
   }
 }

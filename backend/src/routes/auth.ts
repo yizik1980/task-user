@@ -49,8 +49,9 @@ router.post("/login", async (req: Request, res: Response) => {
     }
 
     // Generate JWT token
+    const userId = user._id!.toString();
     const token = JwtService.generateToken({
-      id: user.id,
+      id: userId,
       email: user.email,
       updatedAt: user.updatedAt,
     });
@@ -59,7 +60,7 @@ router.post("/login", async (req: Request, res: Response) => {
       success: true,
       data: {
         user: {
-          id: user.id,
+          id: userId,
           email: user.email,
           username: user.username,
           firstName: user.firstName,
@@ -129,18 +130,19 @@ router.post("/register", async (req: Request, res: Response) => {
       isActive: true,
     });
 
+    const newUserId = newUser._id!.toString();
     res.status(201).json({
       success: true,
       data: {
         user: {
-          id: newUser.id,
+          id: newUserId,
           email: newUser.email,
           username: newUser.username,
           firstName: newUser.firstName,
           lastName: newUser.lastName,
         },
         token: JwtService.generateToken({
-          id: newUser.id,
+          id: newUserId,
           email: newUser.email,
           updatedAt: newUser.updatedAt,
         }),

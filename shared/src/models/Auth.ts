@@ -1,5 +1,5 @@
 export interface JWTPayload {
-  id: number;
+  id: string;
   email: string;
   updatedAt: Date;
   iat?: number;
@@ -15,7 +15,7 @@ export interface LoginResponse {
   success: boolean;
   data?: {
     user: {
-      id: number;
+      id: string;
       email: string;
       username: string;
       firstName: string | null;

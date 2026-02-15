@@ -1,4 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 import { TaskService } from "../../services/task.service";
 import { AuthService } from "../../services/auth.service";
 import { CreateTaskRequest, Task, JWTPayload } from "@shared/models";
@@ -9,7 +11,7 @@ import { CreateTaskRequest, Task, JWTPayload } from "@shared/models";
   styleUrls: ["./task-creation-dialog.component.css"],
   standalone: false,
 })
-export class TaskCreationDialogComponent implements OnChanges {
+export class TaskCreationDialogComponent implements OnChanges, OnDestroy {
   @Input() isOpen = false;
   @Input() selectedDate: Date = new Date();
   @Output() closed = new EventEmitter<void>();
@@ -26,14 +28,17 @@ export class TaskCreationDialogComponent implements OnChanges {
   errorMessage = "";
   successMessage = "";
   private currentUser: JWTPayload | null = null;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private taskService: TaskService,
     private authService: AuthService,
   ) {
-    this.authService.getCurrentUser().subscribe((user) => {
-      this.currentUser = user;
-    });
+    this.authService.getCurrentUser()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        this.currentUser = user;
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -111,5 +116,10 @@ export class TaskCreationDialogComponent implements OnChanges {
 
   private formatDateForInput(date: Date): string {
     return date.toISOString().split("T")[0];
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
