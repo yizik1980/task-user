@@ -19,7 +19,10 @@
         [class.completed]="task.status === 'completed'"
         (click)="onTaskClick($event, task)"
       >
-        <span class="priority-dot" [ngClass]="getPriorityClass(task.priority)"></span>
+        <span
+          class="priority-dot"
+          [ngClass]="getPriorityClass(task.priority)"
+        ></span>
         <span class="task-title">{{ task.title }}</span>
       </div>
     </div>
@@ -31,7 +34,7 @@
 
   <div class="day-footer">
     <span class="month-indicator">
-      {{ formatDate(day.fullDate).split(",")[1].trim() }}
+      {{ formatDate(day.fullDate) | date: "MMM" }}
     </span>
   </div>
 </div>
