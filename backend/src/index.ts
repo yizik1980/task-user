@@ -13,12 +13,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // CORS Configuration
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:4200";
+const SERVER_URL = process.env.SERVER_URL || "http://localhost:3000";
+
 const corsOptions = {
   origin: [
-    "http://localhost:4200", // Angular dev server
-    "http://localhost:3000", // Local testing
-    "http://127.0.0.1:4200",
-    "http://127.0.0.1:3000",
+    CLIENT_URL,
+    SERVER_URL,
+    CLIENT_URL.replace("localhost", "127.0.0.1"),
+    SERVER_URL.replace("localhost", "127.0.0.1"),
   ],
   credentials: true,
   optionsSuccessStatus: 200,

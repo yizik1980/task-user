@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface HttpOptions {
   headers?: HttpHeaders | { [header: string]: string };
@@ -15,7 +16,7 @@ export interface HttpOptions {
 })
 export class HttpService {
   private loading$ = new BehaviorSubject<boolean>(false);
-  private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

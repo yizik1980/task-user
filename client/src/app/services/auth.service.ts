@@ -9,12 +9,13 @@ import {
   AuthResponse,
   CreateUserRequest,
 } from "@shared/models";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService {
-  private apiUrl = "http://localhost:3000/api/auth";
+  private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = "auth_token";
   private isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken());
   private currentUser$ = new BehaviorSubject<JWTPayload | null>(
