@@ -49,7 +49,7 @@ router.post("/login", async (req: Request, res: Response) => {
     }
 
     // Generate JWT token
-    const userId = user._id!.toString();
+    const userId = user._id;
     const token = JwtService.generateToken({
       id: userId,
       email: user.email,

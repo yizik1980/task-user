@@ -145,9 +145,12 @@ router.post("/", async (req: Request, res: Response) => {
       completedAt: null,
     });
 
+    const { _id, ...rest } = newTask as any;
+    const taskResponse = { id: _id.toString(), ...rest };
+
     res.status(201).json({
       success: true,
-      data: newTask,
+      data: taskResponse,
       message: "Task created successfully",
     });
   } catch (error) {

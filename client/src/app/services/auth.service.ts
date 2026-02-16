@@ -1,55 +1,67 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { LoginRequest, LoginResponse, JWTPayload, AuthResponse, CreateUserRequest } from '@shared/models';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable, BehaviorSubject } from "rxjs";
+import { tap } from "rxjs/operators";
+import {
+  LoginRequest,
+  LoginResponse,
+  JWTPayload,
+  AuthResponse,
+  CreateUserRequest,
+} from "@shared/models";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
-  private tokenKey = 'auth_token';
+  private apiUrl = "http://localhost:3000/api/auth";
+  private tokenKey = "auth_token";
   private isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken());
-  private currentUser$ = new BehaviorSubject<JWTPayload | null>(this.getStoredUser());
+  private currentUser$ = new BehaviorSubject<JWTPayload | null>(
+    this.getStoredUser(),
+  );
 
   constructor(private http: HttpClient) {
     this.checkToken();
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
-      tap((response) => {
-        if (response.success && response.data) {
-          this.setToken(response.data.token);
-          const payload: JWTPayload = {
-            id: response.data.user.id,
-            email: response.data.user.email,
-            updatedAt: new Date()
-          };
-          this.setUser(payload);
-          this.isAuthenticated$.next(true);
-        }
-      })
-    );
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}/login`, credentials)
+      .pipe(
+        tap((response) => {
+          if (response.success && response.data) {
+            this.setToken(response.data.token);
+            const payload: JWTPayload = {
+              id: response.data.user.id,
+              email: response.data.user.email,
+              updatedAt: new Date(),
+            };
+            this.setUser(payload);
+            this.isAuthenticated$.next(true);
+          }
+        }),
+      );
   }
 
   register(userData: CreateUserRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, userData).pipe(
-      tap((response) => {
-        if (response.success && response.data) {
-          // Auto-login user after registration
-          this.setToken(response.data.token);
-          const payload: JWTPayload = {
-            id: response.data.user.id,
-            email: response.data.user.email,
-            updatedAt: new Date()
-          };
-          this.setUser(payload);
-          this.isAuthenticated$.next(true);
-        }
-      })
-    );
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}/register`, userData)
+      .pipe(
+        tap((response) => {
+          if (response.success && response.data) {
+            // Auto-login user after registration
+            this.setToken(response.data.token);
+            const payload: JWTPayload = {
+              id: response.data.user.id,
+              email: response.data.user.email,
+              updatedAt: new Date(),
+            };
+            this.setUser(payload);
+            this.isAuthenticated$.next(true);
+          }
+        }),
+      );
   }
 
   logout(): void {
@@ -75,8 +87,8 @@ export class AuthService {
     return !!localStorage.getItem(this.tokenKey);
   }
 
-  private getStoredUser(): JWTPayload | null {
-    const userStr = localStorage.getItem('auth_user');
+  public getStoredUser(): JWTPayload | null {
+    const userStr = localStorage.getItem("auth_user");
     if (userStr) {
       try {
         return JSON.parse(userStr);
@@ -88,12 +100,12 @@ export class AuthService {
   }
 
   private setUser(user: JWTPayload): void {
-    localStorage.setItem('auth_user', JSON.stringify(user));
+    localStorage.setItem("auth_user", JSON.stringify(user));
     this.currentUser$.next(user);
   }
 
   private removeUser(): void {
-    localStorage.removeItem('auth_user');
+    localStorage.removeItem("auth_user");
   }
 
   isAuthenticated(): Observable<boolean> {
@@ -109,13 +121,15 @@ export class AuthService {
   }
 
   refreshToken(token: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, { token }).pipe(
-      tap((response) => {
-        if (response.success && response.data) {
-          this.setToken(response.data.token);
-        }
-      })
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/refresh`, { token })
+      .pipe(
+        tap((response) => {
+          if (response.success && response.data) {
+            this.setToken(response.data.token);
+          }
+        }),
+      );
   }
 
   private checkToken(): void {
@@ -131,7 +145,7 @@ export class AuthService {
         },
         error: () => {
           this.logout();
-        }
+        },
       });
     }
   }
