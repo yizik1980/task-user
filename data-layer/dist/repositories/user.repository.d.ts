@@ -1,6 +1,5 @@
-import { ObjectId } from "mongodb";
 export interface User {
-    _id?: ObjectId;
+    id?: string;
     email: string;
     username: string;
     password: string;
@@ -17,34 +16,13 @@ export interface User {
     updatedAt?: Date;
 }
 export declare class UserRepository {
-    private static collectionName;
-    /**
-     * Get user by email
-     */
+    private static table;
     static getUserByEmail(email: string): Promise<User | null>;
-    /**
-     * Get user by ID
-     */
     static getUserById(id: string): Promise<User | null>;
-    /**
-     * Get all users
-     */
     static getAllUsers(): Promise<User[]>;
-    /**
-     * Create user
-     */
-    static createUser(userData: Omit<User, "_id">): Promise<User>;
-    /**
-     * Update user
-     */
+    static getActiveUsers(): Promise<User[]>;
+    static createUser(userData: Omit<User, "id">): Promise<User>;
     static updateUser(id: string, userData: Partial<User>): Promise<User | null>;
-    /**
-     * Delete user
-     */
     static deleteUser(id: string): Promise<boolean>;
-    /**
-     * Create indexes for performance
-     */
-    static createIndexes(): Promise<void>;
 }
 //# sourceMappingURL=user.repository.d.ts.map

@@ -31,3 +31,8 @@ yarn-error.log
 /coverage
 /dist
 /out-tsc
+/backend/dist
+/backend/build
+/data-layer/dist
+/data-layer/build
+

@@ -14,7 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./mongo-connection"), exports);
+__exportStar(require("./supabase-connection"), exports);
 __exportStar(require("./repositories/user.repository"), exports);
 __exportStar(require("./repositories/task.repository"), exports);
 //# sourceMappingURL=index.js.map

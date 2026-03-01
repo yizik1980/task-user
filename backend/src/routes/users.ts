@@ -21,24 +21,6 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-// Get active users only
-router.get("/active", async (req: Request, res: Response) => {
-  try {
-    const users = await UserRepository.getActiveUsers();
-    res.json({
-      success: true,
-      data: users,
-      count: users.length,
-    });
-  } catch (error) {
-    console.error("Error fetching active users:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch active users",
-    });
-  }
-});
-
 // Get user by ID
 router.get("/:id", async (req: Request, res: Response) => {
   try {

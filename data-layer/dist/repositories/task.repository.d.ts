@@ -1,52 +1,27 @@
-import { ObjectId } from "mongodb";
 export interface Task {
-    _id?: ObjectId;
-    userId: string | ObjectId;
+    id?: string;
+    userId: string;
     title: string;
-    description?: string;
-    completed: boolean;
-    priority?: number;
-    dueDate?: Date;
+    description?: string | null;
+    status: string;
+    priority: string;
+    dueDate?: Date | null;
+    completedAt?: Date | null;
     createdAt?: Date;
     updatedAt?: Date;
 }
 export declare class TaskRepository {
-    private static collectionName;
-    /**
-     * Get task by ID
-     */
+    private static table;
     static getTaskById(id: string): Promise<Task | null>;
-    /**
-     * Get all tasks for a user
-     */
-    static getUserTasks(userId: string): Promise<Task[]>;
-    /**
-     * Get all tasks (admin)
-     */
     static getAllTasks(): Promise<Task[]>;
-    /**
-     * Get tasks within a date range
-     */
+    static getUserTasks(userId: string): Promise<Task[]>;
+    static getTasksByUserId(userId: string): Promise<Task[]>;
+    static getTasksByUserIdAndStatus(userId: string, status: string): Promise<Task[]>;
     static getTasksByDateRange(startDate: Date, endDate: Date): Promise<Task[]>;
-    /**
-     * Create task
-     */
-    static createTask(taskData: Omit<Task, "_id">): Promise<Task>;
-    /**
-     * Update task
-     */
+    static createTask(taskData: Omit<Task, "id">): Promise<Task>;
     static updateTask(id: string, taskData: Partial<Task>): Promise<Task | null>;
-    /**
-     * Delete task
-     */
+    static completeTask(id: string): Promise<Task | null>;
     static deleteTask(id: string): Promise<boolean>;
-    /**
-     * Delete all tasks for a user (cascade delete)
-     */
     static deleteUserTasks(userId: string): Promise<number>;
-    /**
-     * Create indexes for performance
-     */
-    static createIndexes(): Promise<void>;
 }
 //# sourceMappingURL=task.repository.d.ts.map

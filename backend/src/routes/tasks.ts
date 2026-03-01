@@ -61,7 +61,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.get("/user/:userId", async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const tasks = await TaskRepository.getTasksByUserId(userId);
+    const tasks = await TaskRepository.getUserTasks(userId);
     res.json({
       success: true,
       data: tasks,
@@ -69,28 +69,6 @@ router.get("/user/:userId", async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error fetching user tasks:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch user tasks",
-    });
-  }
-});
-
-// Get tasks by user ID and status
-router.get("/user/:userId/:status", async (req: Request, res: Response) => {
-  try {
-    const { userId, status } = req.params;
-    const tasks = await TaskRepository.getTasksByUserIdAndStatus(
-      userId,
-      status.toLowerCase(),
-    );
-    res.json({
-      success: true,
-      data: tasks,
-      count: tasks.length,
-    });
-  } catch (error) {
-    console.error("Error fetching user tasks by status:", error);
     res.status(500).json({
       success: false,
       error: "Failed to fetch user tasks",
@@ -114,10 +92,9 @@ router.post("/", async (req: Request, res: Response) => {
       userId,
       title,
       description: description || null,
-      status: status || "pending",
       priority: priority || "medium",
+      status: status || "pending",
       dueDate: dueDate ? new Date(dueDate) : null,
-      completedAt: null,
     });
 
     res.status(201).json({
@@ -162,33 +139,6 @@ router.put("/:id", async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       error: "Failed to update task",
-    });
-  }
-});
-
-// Complete task
-router.patch("/:id/complete", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const task = await TaskRepository.getTaskById(id);
-    if (!task) {
-      return res.status(404).json({
-        success: false,
-        error: "Task not found",
-      });
-    }
-
-    const completedTask = await TaskRepository.completeTask(id);
-    res.json({
-      success: true,
-      data: completedTask,
-      message: "Task completed successfully",
-    });
-  } catch (error) {
-    console.error("Error completing task:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to complete task",
     });
   }
 });
