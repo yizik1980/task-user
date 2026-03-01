@@ -1,146 +1,160 @@
-import { ObjectId } from "mongodb";
-import { getCollection } from "../mongo-connection";
+import { getSupabaseClient } from "../supabase-connection";
 
 export interface Task {
-  _id?: ObjectId;
-  userId: string | ObjectId;
+  id?: string;
+  userId: string;
   title: string;
-  description?: string;
-  completed: boolean;
-  priority?: number;
-  dueDate?: Date;
+  description?: string | null;
+  status: string;
+  priority: string;
+  dueDate?: Date | null;
+  completedAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
+function mapRow(row: any): Task {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    title: row.title,
+    description: row.description ?? null,
+    status: row.status,
+    priority: row.priority,
+    dueDate: row.due_date ? new Date(row.due_date) : null,
+    completedAt: row.completed_at ? new Date(row.completed_at) : null,
+    createdAt: row.created_at ? new Date(row.created_at) : undefined,
+    updatedAt: row.updated_at ? new Date(row.updated_at) : undefined,
+  };
+}
+
+function toDbRow(task: Partial<Task>): Record<string, any> {
+  const row: Record<string, any> = {};
+  if (task.userId !== undefined) row.user_id = task.userId;
+  if (task.title !== undefined) row.title = task.title;
+  if (task.description !== undefined) row.description = task.description;
+  if (task.status !== undefined) row.status = task.status;
+  if (task.priority !== undefined) row.priority = task.priority;
+  if (task.dueDate !== undefined)
+    row.due_date = task.dueDate ? task.dueDate.toISOString() : null;
+  if (task.completedAt !== undefined)
+    row.completed_at = task.completedAt ? task.completedAt.toISOString() : null;
+  return row;
+}
+
 export class TaskRepository {
-  private static collectionName = "tasks";
+  private static table = "tasks";
 
-  /**
-   * Get task by ID
-   */
   static async getTaskById(id: string): Promise<Task | null> {
-    const collection = getCollection<Task>(this.collectionName);
-    return await collection.findOne({ _id: new ObjectId(id) });
+    const { data, error } = await getSupabaseClient()
+      .from(this.table)
+      .select("*")
+      .eq("id", id)
+      .single();
+    if (error) return null;
+    return mapRow(data);
   }
 
-  /**
-   * Get all tasks for a user
-   */
-  static async getUserTasks(userId: string): Promise<Task[]> {
-    const collection = getCollection<Task>(this.collectionName);
-    return await collection
-      .find({ userId: new ObjectId(userId) })
-      .sort({ createdAt: -1 })
-      .toArray();
-  }
-
-  /**
-   * Get all tasks (admin)
-   */
   static async getAllTasks(): Promise<Task[]> {
-    const collection = getCollection<Task>(this.collectionName);
-    return await collection.find({}).sort({ createdAt: -1 }).toArray();
+    const { data, error } = await getSupabaseClient()
+      .from(this.table)
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data ?? []).map(mapRow);
   }
 
-  /**
-   * Get tasks within a date range
-   */
+  static async getUserTasks(userId: string): Promise<Task[]> {
+    const { data, error } = await getSupabaseClient()
+      .from(this.table)
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data ?? []).map(mapRow);
+  }
+
+  // Alias used by tasks route
+  static async getTasksByUserId(userId: string): Promise<Task[]> {
+    return this.getUserTasks(userId);
+  }
+
+  static async getTasksByUserIdAndStatus(
+    userId: string,
+    status: string,
+  ): Promise<Task[]> {
+    const { data, error } = await getSupabaseClient()
+      .from(this.table)
+      .select("*")
+      .eq("user_id", userId)
+      .eq("status", status)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data ?? []).map(mapRow);
+  }
+
   static async getTasksByDateRange(startDate: Date, endDate: Date): Promise<Task[]> {
-    const collection = getCollection<Task>(this.collectionName);
-    return await collection
-      .find({
-        dueDate: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      })
-      .sort({ dueDate: 1 })
-      .toArray();
+    const { data, error } = await getSupabaseClient()
+      .from(this.table)
+      .select("*")
+      .gte("due_date", startDate.toISOString())
+      .lte("due_date", endDate.toISOString())
+      .order("due_date", { ascending: true });
+    if (error) throw new Error(error.message);
+    return (data ?? []).map(mapRow);
   }
 
-  /**
-   * Create task
-   */
-  static async createTask(taskData: Omit<Task, "_id">): Promise<Task> {
-    const collection = getCollection<Task>(this.collectionName);
-    const now = new Date();
-    const taskWithTimestamp = {
-      ...taskData,
-      userId: new ObjectId(taskData.userId as string),
-      completed: false,
-      createdAt: now,
-      updatedAt: now,
+  static async createTask(taskData: Omit<Task, "id">): Promise<Task> {
+    const row = {
+      ...toDbRow(taskData),
+      updated_at: new Date().toISOString(),
     };
+    const { data, error } = await getSupabaseClient()
+      .from(this.table)
+      .insert(row)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return mapRow(data);
+  }
 
-    const result = await collection.insertOne(taskWithTimestamp);
-
-    return {
-      ...taskWithTimestamp,
-      _id: result.insertedId,
+  static async updateTask(id: string, taskData: Partial<Task>): Promise<Task | null> {
+    const row = {
+      ...toDbRow(taskData),
+      updated_at: new Date().toISOString(),
     };
+    const { data, error } = await getSupabaseClient()
+      .from(this.table)
+      .update(row)
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) return null;
+    return mapRow(data);
   }
 
-  /**
-   * Update task
-   */
-  static async updateTask(
-    id: string,
-    taskData: Partial<Task>,
-  ): Promise<Task | null> {
-    const collection = getCollection<Task>(this.collectionName);
-    const result = await collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      {
-        $set: {
-          ...taskData,
-          updatedAt: new Date(),
-        },
-      },
-      { returnDocument: "after" },
-    );
-
-    return result || null;
-  }
-
-  /**
-   * Delete task
-   */
-  static async deleteTask(id: string): Promise<boolean> {
-    const collection = getCollection<Task>(this.collectionName);
-    const result = await collection.deleteOne({ _id: new ObjectId(id) });
-    return result.deletedCount > 0;
-  }
-
-  /**
-   * Delete all tasks for a user (cascade delete)
-   */
-  static async deleteUserTasks(userId: string): Promise<number> {
-    const collection = getCollection<Task>(this.collectionName);
-    const result = await collection.deleteMany({
-      userId: new ObjectId(userId),
+  static async completeTask(id: string): Promise<Task | null> {
+    return this.updateTask(id, {
+      status: "completed",
+      completedAt: new Date(),
     });
-    return result.deletedCount;
   }
 
-  /**
-   * Create indexes for performance
-   */
-  static async createIndexes(): Promise<void> {
-    const collection = getCollection<Task>(this.collectionName);
+  static async deleteTask(id: string): Promise<boolean> {
+    const { error } = await getSupabaseClient()
+      .from(this.table)
+      .delete()
+      .eq("id", id);
+    return !error;
+  }
 
-    // Index on userId for user task queries
-    await collection.createIndex({ userId: 1 });
-
-    // Index on completed status
-    await collection.createIndex({ completed: 1 });
-
-    // Compound index for user + completed
-    await collection.createIndex({ userId: 1, completed: 1 });
-
-    // Index on dueDate for date range queries
-    await collection.createIndex({ dueDate: 1 });
-
-    console.log("✅ Task collection indexes created");
+  static async deleteUserTasks(userId: string): Promise<number> {
+    const { data, error } = await getSupabaseClient()
+      .from(this.table)
+      .delete()
+      .eq("user_id", userId)
+      .select("id");
+    if (error) return 0;
+    return (data ?? []).length;
   }
 }

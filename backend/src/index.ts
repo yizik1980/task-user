@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectToMongo, closeMongo } from "data-layer";
+import { connectToSupabase, closeSupabase } from "data-layer";
 import usersRouter from "./routes/users";
 import tasksRouter from "./routes/tasks";
 import authRouter from "./routes/auth";
@@ -107,9 +107,9 @@ const startServer = async () => {
     console.log("║       Starting Pohlim Backend Server     ║");
     console.log("╚════════════════════════════════════════╝\n");
 
-    // Initialize MongoDB connection
-    console.log("Step 1: Initializing MongoDB connection...");
-    await connectToMongo();
+    // Initialize Supabase connection
+    console.log("Step 1: Initializing Supabase connection...");
+    await connectToSupabase();
 
     // Start Express server
     app.listen(PORT, () => {
@@ -120,16 +120,12 @@ const startServer = async () => {
     });
   } catch (error: any) {
     console.error("\n❌ Failed to start server\n");
-    console.error("🔧 MongoDB Connection Issue Detected:");
-    console.error(
-      "   Check if MongoDB is running and connection string is correct\n",
-    );
+    console.error("🔧 Supabase Connection Issue Detected:");
+    console.error("   Check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env\n");
     console.error("📋 Next Steps:");
-    console.error(
-      "   1. Start MongoDB: mongod or docker run -d -p 27017:27017 mongo",
-    );
-    console.error("   2. Check .env for MONGO_URI configuration");
-    console.error("   3. Run: cd data-layer && npm run test-db\n");
+    console.error("   1. Create a project at https://supabase.com");
+    console.error("   2. Run supabase-migration.sql in the Supabase SQL editor");
+    console.error("   3. Copy the project URL and service role key into .env\n");
     process.exit(1);
   }
 };
@@ -137,7 +133,7 @@ const startServer = async () => {
 // Graceful shutdown
 process.on("SIGINT", async () => {
   console.log("\n\n🛑 Shutting down server...");
-  await closeMongo();
+  await closeSupabase();
   console.log("✅ Server closed gracefully\n");
   process.exit(0);
 });

@@ -36,14 +36,7 @@ router.get("/", async (req: Request, res: Response) => {
 // Get task by ID
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid task ID",
-      });
-    }
-
+    const { id } = req.params;
     const task = await TaskRepository.getTaskById(id);
     if (!task) {
       return res.status(404).json({
@@ -51,7 +44,6 @@ router.get("/:id", async (req: Request, res: Response) => {
         error: "Task not found",
       });
     }
-
     res.json({
       success: true,
       data: task,
@@ -68,14 +60,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 // Get tasks by user ID
 router.get("/user/:userId", async (req: Request, res: Response) => {
   try {
-    const userId = parseInt(req.params.userId);
-    if (isNaN(userId)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid user ID",
-      });
-    }
-
+    const { userId } = req.params;
     const tasks = await TaskRepository.getTasksByUserId(userId);
     res.json({
       success: true,
@@ -94,19 +79,10 @@ router.get("/user/:userId", async (req: Request, res: Response) => {
 // Get tasks by user ID and status
 router.get("/user/:userId/:status", async (req: Request, res: Response) => {
   try {
-    const userId = parseInt(req.params.userId);
-    const status = req.params.status.toLowerCase();
-
-    if (isNaN(userId)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid user ID",
-      });
-    }
-
+    const { userId, status } = req.params;
     const tasks = await TaskRepository.getTasksByUserIdAndStatus(
       userId,
-      status,
+      status.toLowerCase(),
     );
     res.json({
       success: true,
@@ -127,7 +103,6 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     const { userId, title, description, status, priority, dueDate } = req.body;
 
-    // Validation
     if (!userId || !title) {
       return res.status(400).json({
         success: false,
@@ -145,12 +120,9 @@ router.post("/", async (req: Request, res: Response) => {
       completedAt: null,
     });
 
-    const { _id, ...rest } = newTask as any;
-    const taskResponse = { id: _id.toString(), ...rest };
-
     res.status(201).json({
       success: true,
-      data: taskResponse,
+      data: newTask,
       message: "Task created successfully",
     });
   } catch (error) {
@@ -165,14 +137,7 @@ router.post("/", async (req: Request, res: Response) => {
 // Update task
 router.put("/:id", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid task ID",
-      });
-    }
-
+    const { id } = req.params;
     const task = await TaskRepository.getTaskById(id);
     if (!task) {
       return res.status(404).json({
@@ -187,7 +152,6 @@ router.put("/:id", async (req: Request, res: Response) => {
     }
 
     const updatedTask = await TaskRepository.updateTask(id, updateData);
-
     res.json({
       success: true,
       data: updatedTask,
@@ -205,14 +169,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 // Complete task
 router.patch("/:id/complete", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid task ID",
-      });
-    }
-
+    const { id } = req.params;
     const task = await TaskRepository.getTaskById(id);
     if (!task) {
       return res.status(404).json({
@@ -222,7 +179,6 @@ router.patch("/:id/complete", async (req: Request, res: Response) => {
     }
 
     const completedTask = await TaskRepository.completeTask(id);
-
     res.json({
       success: true,
       data: completedTask,
@@ -240,14 +196,7 @@ router.patch("/:id/complete", async (req: Request, res: Response) => {
 // Delete task
 router.delete("/:id", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid task ID",
-      });
-    }
-
+    const { id } = req.params;
     const task = await TaskRepository.getTaskById(id);
     if (!task) {
       return res.status(404).json({

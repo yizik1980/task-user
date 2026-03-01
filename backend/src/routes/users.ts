@@ -1,6 +1,5 @@
 import { Router, Request, Response } from "express";
 import { UserRepository } from "data-layer";
-import { User } from "@shared/models";
 
 const router = Router();
 
@@ -43,14 +42,7 @@ router.get("/active", async (req: Request, res: Response) => {
 // Get user by ID
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid user ID",
-      });
-    }
-
+    const { id } = req.params;
     const user = await UserRepository.getUserById(id);
     if (!user) {
       return res.status(404).json({
@@ -58,7 +50,6 @@ router.get("/:id", async (req: Request, res: Response) => {
         error: "User not found",
       });
     }
-
     res.json({
       success: true,
       data: user,
@@ -90,7 +81,6 @@ router.post("/", async (req: Request, res: Response) => {
       isActive,
     } = req.body;
 
-    // Validation
     if (!email || !username || !password) {
       return res.status(400).json({
         success: false,
@@ -98,7 +88,6 @@ router.post("/", async (req: Request, res: Response) => {
       });
     }
 
-    // Check if user already exists
     const existingUser = await UserRepository.getUserByEmail(email);
     if (existingUser) {
       return res.status(409).json({
@@ -139,14 +128,7 @@ router.post("/", async (req: Request, res: Response) => {
 // Update user
 router.put("/:id", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid user ID",
-      });
-    }
-
+    const { id } = req.params;
     const user = await UserRepository.getUserById(id);
     if (!user) {
       return res.status(404).json({
@@ -155,9 +137,7 @@ router.put("/:id", async (req: Request, res: Response) => {
       });
     }
 
-    const updateData = req.body;
-    const updatedUser = await UserRepository.updateUser(id, updateData);
-
+    const updatedUser = await UserRepository.updateUser(id, req.body);
     res.json({
       success: true,
       data: updatedUser,
@@ -175,14 +155,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 // Delete user
 router.delete("/:id", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid user ID",
-      });
-    }
-
+    const { id } = req.params;
     const user = await UserRepository.getUserById(id);
     if (!user) {
       return res.status(404).json({

@@ -49,7 +49,7 @@ router.post("/login", async (req: Request, res: Response) => {
     }
 
     // Generate JWT token
-    const userId = user._id;
+    const userId = user.id;
     const token = JwtService.generateToken({
       id: userId,
       email: user.email,
@@ -130,7 +130,7 @@ router.post("/register", async (req: Request, res: Response) => {
       isActive: true,
     });
 
-    const newUserId = newUser._id!.toString();
+    const newUserId = newUser.id!;
     res.status(201).json({
       success: true,
       data: {

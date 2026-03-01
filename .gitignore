@@ -26,9 +26,8 @@ yarn-error.log
 /build
 /compile
 /docs
-/.angular
+.angular/
 /tmp
 /coverage
 /dist
 /out-tsc
-.angular/cache  
