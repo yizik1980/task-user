@@ -44,9 +44,6 @@ export async function connectToSupabase(): Promise<SupabaseClient> {
   return supabaseClient;
 }
 
-/**
- * Get the Supabase client instance
- */
 export function getSupabaseClient(): SupabaseClient {
   if (!supabaseClient) {
     throw new Error(
@@ -56,18 +53,12 @@ export function getSupabaseClient(): SupabaseClient {
   return supabaseClient;
 }
 
-/**
- * Close Supabase connection (no-op, client is stateless)
- */
 export async function closeSupabase(): Promise<void> {
   supabaseClient = null;
   connected = false;
   console.log("Supabase client closed");
 }
 
-/**
- * Check if connected
- */
 export function isConnected(): boolean {
   return connected;
 }

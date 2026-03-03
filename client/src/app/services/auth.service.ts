@@ -144,9 +144,6 @@ export class AuthService {
             this.logout();
           }
         },
-        error: () => {
-          this.logout();
-        },
       });
     }
   }

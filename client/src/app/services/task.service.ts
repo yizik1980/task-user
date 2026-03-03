@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Task, CreateTaskRequest, UpdateTaskRequest } from '@shared/models';
-import { ApiService, ApiResponse } from './api.service';
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { Task, CreateTaskRequest, UpdateTaskRequest } from "@shared/models";
+import { ApiService, ApiResponse } from "./api.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class TaskService {
-  private endpoint = '/tasks';
+  private endpoint = "/tasks";
 
   constructor(private apiService: ApiService) {}
 
@@ -23,25 +23,12 @@ export class TaskService {
     return this.apiService.customGet<Task[]>(`${this.endpoint}/user/${userId}`);
   }
 
-  getTasksByUserIdAndStatus(userId: string, status: string): Observable<ApiResponse<Task[]>> {
-    return this.apiService.customGet<Task[]>(`${this.endpoint}/user/${userId}/${status}`);
-  }
-
-  getPendingTasks(): Observable<ApiResponse<Task[]>> {
-    return this.apiService.customGet<Task[]>(`${this.endpoint}/status/pending`);
-  }
-
-  getHighPriorityTasks(): Observable<ApiResponse<Task[]>> {
-    return this.apiService.customGet<Task[]>(`${this.endpoint}/priority/high`);
-  }
-
-  getOverdueTasks(): Observable<ApiResponse<Task[]>> {
-    return this.apiService.customGet<Task[]>(`${this.endpoint}/overdue`);
-  }
-
-  getTasksByDateRange(startDate: string, endDate: string): Observable<ApiResponse<Task[]>> {
+  getTasksByDateRange(
+    startDate: string,
+    endDate: string,
+  ): Observable<ApiResponse<Task[]>> {
     return this.apiService.customGet<Task[]>(
-      `${this.endpoint}?startDate=${startDate}&endDate=${endDate}`
+      `${this.endpoint}?startDate=${startDate}&endDate=${endDate}`,
     );
   }
 
@@ -49,16 +36,21 @@ export class TaskService {
     return this.apiService.create<Task>(this.endpoint, task);
   }
 
-  updateTask(id: string, task: UpdateTaskRequest): Observable<ApiResponse<Task>> {
+  updateTask(
+    id: string,
+    task: UpdateTaskRequest,
+  ): Observable<ApiResponse<Task>> {
     return this.apiService.update<Task>(this.endpoint, id, task);
   }
 
   completeTask(id: string): Observable<ApiResponse<Task>> {
-    return this.apiService.customPatch<Task>(`${this.endpoint}/${id}/complete`, {});
+    return this.apiService.customPatch<Task>(
+      `${this.endpoint}/${id}/complete`,
+      {},
+    );
   }
 
   deleteTask(id: string): Observable<ApiResponse<void>> {
     return this.apiService.delete<void>(this.endpoint, id);
   }
 }
-

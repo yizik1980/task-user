@@ -1,17 +1,7 @@
+import { Task } from "@/dto/task.dto";
 import { getSupabaseClient } from "../supabase-connection";
 
-export interface Task {
-  id?: string;
-  userId: string;
-  title: string;
-  description?: string | null;
-  status: string;
-  priority: string;
-  dueDate?: Date | null;
-  completedAt?: Date | null;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+const TABLE = "tasks";
 
 function mapRow(row: any): Task {
   return {
@@ -29,25 +19,18 @@ function mapRow(row: any): Task {
 }
 
 function toDbRow(task: Partial<Task>): Record<string, any> {
-  const row: Record<string, any> = {};
-  if (task.userId !== undefined) row.user_id = task.userId;
-  if (task.title !== undefined) row.title = task.title;
-  if (task.description !== undefined) row.description = task.description;
-  if (task.status !== undefined) row.status = task.status;
-  if (task.priority !== undefined) row.priority = task.priority;
-  if (task.dueDate !== undefined)
-    row.due_date = task.dueDate ? task.dueDate.toISOString() : null;
-  if (task.completedAt !== undefined)
-    row.completed_at = task.completedAt ? task.completedAt.toISOString() : null;
-  return row;
+  return {
+    user_id: task.userId,
+    due_date: task.dueDate ? task.dueDate.toISOString() : null,
+    completed_at: task.completedAt ? task.completedAt.toISOString() : null,
+    ...task,
+  } as Record<string, any>;
 }
 
 export class TaskRepository {
-  private static table = "tasks";
-
   static async getTaskById(id: string): Promise<Task | null> {
     const { data, error } = await getSupabaseClient()
-      .from(this.table)
+      .from(TABLE)
       .select("*")
       .eq("id", id)
       .single();
@@ -57,7 +40,7 @@ export class TaskRepository {
 
   static async getAllTasks(): Promise<Task[]> {
     const { data, error } = await getSupabaseClient()
-      .from(this.table)
+      .from(TABLE)
       .select("*")
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
@@ -66,7 +49,7 @@ export class TaskRepository {
 
   static async getUserTasks(userId: string): Promise<Task[]> {
     const { data, error } = await getSupabaseClient()
-      .from(this.table)
+      .from(TABLE)
       .select("*")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
@@ -84,7 +67,7 @@ export class TaskRepository {
     status: string,
   ): Promise<Task[]> {
     const { data, error } = await getSupabaseClient()
-      .from(this.table)
+      .from(TABLE)
       .select("*")
       .eq("user_id", userId)
       .eq("status", status)
@@ -93,9 +76,12 @@ export class TaskRepository {
     return (data ?? []).map(mapRow);
   }
 
-  static async getTasksByDateRange(startDate: Date, endDate: Date): Promise<Task[]> {
+  static async getTasksByDateRange(
+    startDate: Date,
+    endDate: Date,
+  ): Promise<Task[]> {
     const { data, error } = await getSupabaseClient()
-      .from(this.table)
+      .from(TABLE)
       .select("*")
       .gte("due_date", startDate.toISOString())
       .lte("due_date", endDate.toISOString())
@@ -110,7 +96,7 @@ export class TaskRepository {
       updated_at: new Date().toISOString(),
     };
     const { data, error } = await getSupabaseClient()
-      .from(this.table)
+      .from(TABLE)
       .insert(row)
       .select()
       .single();
@@ -118,13 +104,16 @@ export class TaskRepository {
     return mapRow(data);
   }
 
-  static async updateTask(id: string, taskData: Partial<Task>): Promise<Task | null> {
+  static async updateTask(
+    id: string,
+    taskData: Partial<Task>,
+  ): Promise<Task | null> {
     const row = {
       ...toDbRow(taskData),
       updated_at: new Date().toISOString(),
     };
     const { data, error } = await getSupabaseClient()
-      .from(this.table)
+      .from(TABLE)
       .update(row)
       .eq("id", id)
       .select()
@@ -142,7 +131,7 @@ export class TaskRepository {
 
   static async deleteTask(id: string): Promise<boolean> {
     const { error } = await getSupabaseClient()
-      .from(this.table)
+      .from(TABLE)
       .delete()
       .eq("id", id);
     return !error;
@@ -150,7 +139,7 @@ export class TaskRepository {
 
   static async deleteUserTasks(userId: string): Promise<number> {
     const { data, error } = await getSupabaseClient()
-      .from(this.table)
+      .from(TABLE)
       .delete()
       .eq("user_id", userId)
       .select("id");

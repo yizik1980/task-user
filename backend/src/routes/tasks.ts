@@ -3,36 +3,6 @@ import { TaskRepository } from "data-layer";
 
 const router = Router();
 
-// Get all tasks (with optional date range filter)
-router.get("/", async (req: Request, res: Response) => {
-  try {
-    const { startDate, endDate } = req.query;
-
-    let tasks;
-    if (startDate && endDate) {
-      const start = new Date(startDate as string);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(endDate as string);
-      end.setHours(23, 59, 59, 999);
-      tasks = await TaskRepository.getTasksByDateRange(start, end);
-    } else {
-      tasks = await TaskRepository.getAllTasks();
-    }
-
-    res.json({
-      success: true,
-      data: tasks,
-      count: tasks.length,
-    });
-  } catch (error) {
-    console.error("Error fetching tasks:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch tasks",
-    });
-  }
-});
-
 // Get task by ID
 router.get("/:id", async (req: Request, res: Response) => {
   try {

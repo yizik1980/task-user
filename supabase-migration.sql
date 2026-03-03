@@ -1,8 +1,3 @@
--- Supabase Migration: Initial Schema
--- Run this in the Supabase SQL editor (https://app.supabase.com → SQL Editor)
-
--- Enable UUID generation (available by default in Supabase)
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ============================================================
 -- USERS TABLE
@@ -40,20 +35,3 @@ CREATE TABLE IF NOT EXISTS tasks (
   created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
--- ============================================================
--- INDEXES
--- ============================================================
-CREATE INDEX IF NOT EXISTS idx_users_email     ON users(email);
-CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active);
-CREATE INDEX IF NOT EXISTS idx_tasks_user_id   ON tasks(user_id);
-CREATE INDEX IF NOT EXISTS idx_tasks_status    ON tasks(status);
-CREATE INDEX IF NOT EXISTS idx_tasks_due_date  ON tasks(due_date);
-
--- ============================================================
--- ROW LEVEL SECURITY (optional — disable if using service role key)
--- ============================================================
--- The backend uses the service role key which bypasses RLS.
--- If you want to enable RLS for direct client access, uncomment below:
--- ALTER TABLE users ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
