@@ -19,11 +19,6 @@
     </div>
   </div>
 
-  <div class="error-banner" *ngIf="loadError">
-    Failed to load tasks.
-    <button class="retry-btn" (click)="retryFetch()">Retry</button>
-  </div>
-
   <div class="weekly-board">
     <app-day-card
       *ngFor="let day of weekDays"

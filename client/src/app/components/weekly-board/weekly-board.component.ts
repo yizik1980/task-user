@@ -1,7 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
-import { TaskService } from "../../services/task.service";
+import { Component, OnInit, OnChanges, SimpleChanges, Input, Output, EventEmitter } from "@angular/core";
 import { Task } from "@shared/models";
 import { WeekDay } from "../day-card/day-card.component";
 
@@ -11,13 +8,15 @@ import { WeekDay } from "../day-card/day-card.component";
   styleUrls: ["./weekly-board.component.css"],
   standalone: false,
 })
-export class WeeklyBoardComponent implements OnInit, OnDestroy {
+export class WeeklyBoardComponent implements OnInit, OnChanges {
+  @Input() tasks: Task[] = [];
+  @Output() tasksChanged = new EventEmitter<void>();
+
   weekDays: WeekDay[] = [];
   currentDate: Date = new Date();
   weekStartDate: Date = new Date();
   monthYear: string = "";
   tasksByDate: Map<string, Task[]> = new Map();
-  loadError = false;
 
   // Dialog state
   showCreateDialog = false;
@@ -26,13 +25,15 @@ export class WeeklyBoardComponent implements OnInit, OnDestroy {
   selectedDate: Date = new Date();
   selectedTask: Task | null = null;
 
-  private destroy$ = new Subject<void>();
-
-  constructor(private taskService: TaskService) {}
-
   ngOnInit(): void {
     this.generateWeekDays();
-    this.fetchTasksForWeek();
+    this.filterTasksForWeek();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["tasks"]) {
+      this.filterTasksForWeek();
+    }
   }
 
   getTasksForDay(day: WeekDay): Task[] {
@@ -44,20 +45,20 @@ export class WeeklyBoardComponent implements OnInit, OnDestroy {
     this.currentDate = new Date(this.weekStartDate);
     this.currentDate.setDate(this.currentDate.getDate() + 7);
     this.generateWeekDays();
-    this.fetchTasksForWeek();
+    this.filterTasksForWeek();
   }
 
   previousWeek(): void {
     this.currentDate = new Date(this.weekStartDate);
     this.currentDate.setDate(this.currentDate.getDate() - 7);
     this.generateWeekDays();
-    this.fetchTasksForWeek();
+    this.filterTasksForWeek();
   }
 
   goToToday(): void {
     this.currentDate = new Date();
     this.generateWeekDays();
-    this.fetchTasksForWeek();
+    this.filterTasksForWeek();
   }
 
   onDayClick(day: WeekDay): void {
@@ -75,7 +76,7 @@ export class WeeklyBoardComponent implements OnInit, OnDestroy {
   }
 
   onTaskCreated(task: Task): void {
-    this.fetchTasksForWeek();
+    this.tasksChanged.emit();
   }
 
   onViewDialogClose(): void {
@@ -92,12 +93,12 @@ export class WeeklyBoardComponent implements OnInit, OnDestroy {
   onTaskDeleted(task: Task): void {
     this.showViewDialog = false;
     this.selectedTask = null;
-    this.fetchTasksForWeek();
+    this.tasksChanged.emit();
   }
 
   onTaskUpdatedFromView(task: Task): void {
     this.selectedTask = task;
-    this.fetchTasksForWeek();
+    this.tasksChanged.emit();
   }
 
   onEditDialogClose(): void {
@@ -108,12 +109,7 @@ export class WeeklyBoardComponent implements OnInit, OnDestroy {
   onTaskUpdated(task: Task): void {
     this.showEditDialog = false;
     this.selectedTask = null;
-    this.fetchTasksForWeek();
-  }
-
-  retryFetch(): void {
-    this.loadError = false;
-    this.fetchTasksForWeek();
+    this.tasksChanged.emit();
   }
 
   private generateWeekDays(): void {
@@ -154,43 +150,26 @@ export class WeeklyBoardComponent implements OnInit, OnDestroy {
     this.monthYear = `${monthNames[weekStart.getMonth()]} ${weekStart.getFullYear()}`;
   }
 
-  private fetchTasksForWeek(): void {
-    const startDate = this.formatDateForApi(this.weekDays[0].fullDate);
-    const endDate = this.formatDateForApi(this.weekDays[6].fullDate);
+  private filterTasksForWeek(): void {
+    if (!this.weekDays.length) return;
 
-    this.taskService
-      .getTasksByDateRange(startDate, endDate)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.loadError = false;
-          const tasks = response.data || [];
-          this.tasksByDate = new Map();
-          for (const task of tasks) {
-            if (task.dueDate) {
-              const key = this.dateToKey(new Date(task.dueDate));
-              const existing = this.tasksByDate.get(key) || [];
-              existing.push(task);
-              this.tasksByDate.set(key, existing);
-            }
-          }
-        },
-        error: () => {
-          this.loadError = true;
-        },
-      });
+    const weekStart = this.dateToKey(this.weekDays[0].fullDate);
+    const weekEnd = this.dateToKey(this.weekDays[6].fullDate);
+
+    this.tasksByDate = new Map();
+    for (const task of this.tasks) {
+      if (task.dueDate) {
+        const key = this.dateToKey(new Date(task.dueDate));
+        if (key >= weekStart && key <= weekEnd) {
+          const existing = this.tasksByDate.get(key) || [];
+          existing.push(task);
+          this.tasksByDate.set(key, existing);
+        }
+      }
+    }
   }
 
   private dateToKey(date: Date): string {
     return new Date(date).toISOString().split("T")[0];
-  }
-
-  private formatDateForApi(date: Date): string {
-    return date.toISOString().split("T")[0];
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }

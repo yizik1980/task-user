@@ -18,9 +18,7 @@ export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = "auth_token";
   private isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken());
-  private currentUser$ = new BehaviorSubject<JWTPayload | null>(
-    this.getStoredUser(),
-  );
+  private currentUser$ = new BehaviorSubject<JWTPayload>(this.getStoredUser());
 
   constructor(private http: HttpClient) {
     this.checkToken();
@@ -69,7 +67,6 @@ export class AuthService {
     this.removeToken();
     this.removeUser();
     this.isAuthenticated$.next(false);
-    this.currentUser$.next(null);
   }
 
   getToken(): string | null {
@@ -88,16 +85,8 @@ export class AuthService {
     return !!localStorage.getItem(this.tokenKey);
   }
 
-  public getStoredUser(): JWTPayload | null {
-    const userStr = localStorage.getItem("auth_user");
-    if (userStr) {
-      try {
-        return JSON.parse(userStr);
-      } catch {
-        return null;
-      }
-    }
-    return null;
+  public getStoredUser(): JWTPayload {
+    return JSON.parse(localStorage.getItem("auth_user") || "null");
   }
 
   private setUser(user: JWTPayload): void {
@@ -113,7 +102,7 @@ export class AuthService {
     return this.isAuthenticated$.asObservable();
   }
 
-  getCurrentUser(): Observable<JWTPayload | null> {
+  getCurrentUser(): Observable<JWTPayload> {
     return this.currentUser$.asObservable();
   }
 

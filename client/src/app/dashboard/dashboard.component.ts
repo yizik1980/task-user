@@ -5,7 +5,7 @@ import { TaskService } from "../services/task.service";
 import { AuthService } from "../services/auth.service";
 import { User, Task, JWTPayload } from "@shared/models";
 import { NEVER, Observable, Subject } from "rxjs";
-import { map, switchMap, takeUntil } from "rxjs/operators";
+import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-dashboard",
@@ -16,7 +16,7 @@ import { map, switchMap, takeUntil } from "rxjs/operators";
 export class DashboardComponent implements OnInit, OnDestroy {
   title = "Pohlim Monorepo";
   users: User[] = [];
-  tasks$: Observable<Task[]> = NEVER;
+  tasks$: Observable<Task[]> = new Observable<Task[]>();
   loading = false;
   activeTab: "users" | "tasks" = "users";
   currentUser: JWTPayload | null = null;
@@ -32,9 +32,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.tasks$ = this.authService.getCurrentUser().pipe(
-      switchMap((user) =>
-        user ? this.taskService.getTasksByUserId(user.id) : NEVER,
-      ),
+      filter((user) => !!user),
+      switchMap((user) => this.taskService.getTasksByUserId(user?.id)),
+      filter((response) => !!response?.data),
       map((response) => {
         return response.data || [];
       }),

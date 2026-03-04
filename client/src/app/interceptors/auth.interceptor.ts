@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -6,10 +6,11 @@ import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(private injector: Injector) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.authService.getToken();
+    const authService = this.injector.get(AuthService);
+    const token = authService.getToken();
 
     // Clone request with proper CORS headers
     let modifiedReq = req.clone({
@@ -36,7 +37,7 @@ export class AuthInterceptor implements HttpInterceptor {
           console.error('CORS Error or Network Error:', error);
         } else if (error.status === 401) {
           // Unauthorized - clear auth and redirect to login
-          this.authService.logout();
+          authService.logout();
         }
         return throwError(() => error);
       })

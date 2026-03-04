@@ -43,5 +43,5 @@
   </header>
 
   <!-- Weekly Board -->
-  <app-weekly-board></app-weekly-board>
+  <app-weekly-board [tasks]="(tasks$ | async) || []"></app-weekly-board>
 </div>
