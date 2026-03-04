@@ -1,13 +1,14 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { DashboardRoutingModule } from './dashboard-routing.module';
-import { DashboardComponent } from './dashboard.component';
-import { WeeklyBoardComponent } from '../components/weekly-board/weekly-board.component';
-import { DayCardComponent } from '../components/day-card/day-card.component';
-import { TaskCreationDialogComponent } from '../components/task-creation-dialog/task-creation-dialog.component';
-import { TaskViewDialogComponent } from '../components/task-view-dialog/task-view-dialog.component';
-import { TaskEditDialogComponent } from '../components/task-edit-dialog/task-edit-dialog.component';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { DashboardRoutingModule } from "./dashboard-routing.module";
+import { DashboardComponent } from "./dashboard.component";
+import { WeeklyBoardComponent } from "../components/weekly-board/weekly-board.component";
+import { DayCardComponent } from "../components/day-card/day-card.component";
+import { TaskCreationDialogComponent } from "../components/task-creation-dialog/task-creation-dialog.component";
+import { TaskViewDialogComponent } from "../components/task-view-dialog/task-view-dialog.component";
+import { TaskEditDialogComponent } from "../components/task-edit-dialog/task-edit-dialog.component";
+import { TopNavComponent } from "../components/top-nav/top-nav.component";
 
 @NgModule({
   declarations: [
@@ -16,12 +17,8 @@ import { TaskEditDialogComponent } from '../components/task-edit-dialog/task-edi
     DayCardComponent,
     TaskCreationDialogComponent,
     TaskViewDialogComponent,
-    TaskEditDialogComponent
+    TaskEditDialogComponent,
   ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    DashboardRoutingModule
-  ]
+  imports: [CommonModule, FormsModule, DashboardRoutingModule, TopNavComponent],
 })
 export class DashboardModule {}
