@@ -10,16 +10,19 @@ RUN apk add --no-cache python3 make g++
 COPY package.json package-lock.json ./
 COPY backend/package.json ./backend/
 COPY data-layer/package.json ./data-layer/
+COPY shared/package.json ./shared/
 
 # Install all workspace dependencies
 RUN npm ci --workspaces --include-workspace-root
 
 # Copy source
 COPY data-layer/ ./data-layer/
+COPY shared/ ./shared/
 COPY backend/ ./backend/
 
-# Build data-layer, then backend
+# Build in dependency order
 RUN npm run build --workspace=data-layer
+RUN npm run build --workspace=shared
 RUN npm run build --workspace=backend
 
 # ── Stage 2: Production ───────────────────────────────────────────────────────
