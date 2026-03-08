@@ -49,11 +49,11 @@ router.post("/login", async (req: Request, res: Response) => {
     }
 
     // Generate JWT token
-    const userId = user.id;
+    const userId = user.id!;
     const token = JwtService.generateToken({
       id: userId,
       email: user.email,
-      updatedAt: user.updatedAt,
+      updatedAt: user.updatedAt ?? new Date(),
     });
 
     res.json({
@@ -144,7 +144,7 @@ router.post("/register", async (req: Request, res: Response) => {
         token: JwtService.generateToken({
           id: newUserId,
           email: newUser.email,
-          updatedAt: newUser.updatedAt,
+          updatedAt: newUser.updatedAt ?? new Date(),
         }),
         expiresIn: "24h",
       },
